@@ -1,9 +1,38 @@
 package main
 
 import (
-	"fmt"
+	"goparking/configs"
+	"goparking/database"
+	"goparking/internals/libs/logger"
+	"goparking/internals/libs/validation"
+	"sync"
+
+	httpServer "goparking/internals/server/http"
 )
 
 func main() {
-	fmt.Print("haha")
+	cfg := configs.LoadConfig(".")
+	logger.Initialize(cfg.Environment)
+
+	db, err := database.NewDatabase(cfg.DatabaseURI)
+	if err != nil {
+		logger.Fatal("Cannot connect to database", err)
+	}
+	validator := validation.New()
+
+	// Initialize HTTP server
+	httpSvr := httpServer.NewServer(validator, db)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Run HTTP server
+	go func() {
+		defer wg.Done()
+		if err := httpSvr.Run(); err != nil {
+			logger.Fatal("Running HTTP server error:", err)
+		}
+	}()
+
+	wg.Wait()
 }
