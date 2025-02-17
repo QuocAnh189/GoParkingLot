@@ -4,9 +4,15 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "goparking/docs"
+
 	"goparking/database"
 	"goparking/internals/libs/logger"
 	"goparking/internals/libs/validation"
+	"net/http"
 
 	"goparking/configs"
 )
@@ -38,6 +44,12 @@ func (s Server) Run() error {
 	if err := s.MapRoutes(); err != nil {
 		logger.Fatalf("MapRoutes Error: %v", err)
 	}
+
+	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	s.engine.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Welcome to GoHub API"})
+	})
 
 	// Start http server
 	logger.Info("HTTP server is listening on PORT: ", s.cfg.HttpPort)
