@@ -13,11 +13,6 @@ const (
 	DatabaseTimeout = time.Second * 5
 )
 
-var AuthIgnoreMethods = []string{
-	"/user.UserService/Login",
-	"/user.UserService/Register",
-}
-
 type Config struct {
 	Environment string `mapstructure:"ENVIRONMENT"`
 	HttpPort    int    `mapstructure:"HTTP_PORT"`
