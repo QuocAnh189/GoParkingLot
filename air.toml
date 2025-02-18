@@ -1,0 +1,14 @@
+# air.toml
+# Cấu hình Air cho phép reload tự động khi thay đổi mã nguồn
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go run main.go"  # Lệnh để chạy ứng dụng của bạn
+bin = "tmp/main"         # Lưu trữ file binary trong tmp
+
+[watch]
+dir = ["."]
+ignore_dir = ["tmp", "vendor", ".git"]
+extensions = ["go"]
+recursive = true

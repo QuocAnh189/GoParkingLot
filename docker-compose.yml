@@ -1,0 +1,57 @@
+services:
+  parking.api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking.api
+    env_file:
+      - app.env
+    ports:
+      - "8002:8080"
+    depends_on:
+      - parking.db
+      - parking.minio
+    restart: unless-stopped
+    volumes:
+      - .:/app
+
+  parking.db:
+    image: postgres:16
+    container_name: parking.db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: QuocAnh-1809
+      POSTGRES_DB: parkinglot
+    ports:
+      - "5433:5432"
+    volumes:
+      - parking_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  parking.minio:
+    image: minio/minio:latest
+    container_name: parking.minio
+    ports:
+      - "9000:9000" # MinIO Console
+      - "9001:9001" # MinIO Admin Console
+    restart: always
+    volumes:
+      - parking_minio_data:/data
+      - parking_minio_config:/root/.minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
+
+networks:
+  default:
+    name: parking
+    driver: bridge
+
+volumes:
+  parking_postgres_data:
+    name: parking_postgres_data
+  parking_minio_data:
+    name: parking_minio_data
+  parking_minio_config:
+    name: parking_minio_config
