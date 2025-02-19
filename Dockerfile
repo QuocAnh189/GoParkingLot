@@ -3,7 +3,6 @@ FROM golang:1.23.2 AS builder
 
 # Thiết lập thư mục làm việc và sao chép các file cần thiết
 WORKDIR /app
-RUN curl -fLo /usr/local/bin/air https://github.com/air-verse/air/releases/download/v1.61.1/air_1.61.1_linux_amd64 && chmod +x /usr/local/bin/air
 
 # Kiểm tra xem air có được cài đặt đúng không
 RUN which air
@@ -30,6 +29,4 @@ COPY --from=builder /app/configs ./configs
 # Expose cổng 8080
 EXPOSE 8080
 
-# Chạy ứng dụng bằng Air để tự động reload khi có thay đổi
-#CMD ["air", "-c", "air.toml"]
 CMD ["./main"]
