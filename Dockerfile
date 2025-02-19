@@ -4,9 +4,6 @@ FROM golang:1.23.2 AS builder
 # Thiết lập thư mục làm việc và sao chép các file cần thiết
 WORKDIR /app
 
-# Kiểm tra xem air có được cài đặt đúng không
-RUN which air
-
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .

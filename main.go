@@ -7,6 +7,9 @@ import (
 	"goparking/internals/libs/validation"
 	"sync"
 
+	userModel "goparking/domains/auth/model"
+	cardModel "goparking/domains/card/model"
+	ioHistoryModel "goparking/domains/io_history/model"
 	httpServer "goparking/internals/server/http"
 )
 
@@ -33,6 +36,12 @@ func main() {
 	if err != nil {
 		logger.Fatal("Cannot connect to database", err)
 	}
+
+	err = db.AutoMigrate(&userModel.User{}, cardModel.Card{}, ioHistoryModel.IOHistory{})
+	if err != nil {
+		logger.Fatal("Database migration fail", err)
+	}
+
 	validator := validation.New()
 
 	// Initialize HTTP server
