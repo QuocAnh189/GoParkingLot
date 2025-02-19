@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"goparking/pkgs/minio"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -15,21 +16,27 @@ import (
 	"net/http"
 
 	"goparking/configs"
+
+	authHttp "goparking/domains/auth/port/http"
+	cardHttp "goparking/domains/card/port/http"
+	ioHistoryHttp "goparking/domains/io_history/port/http"
 )
 
 type Server struct {
-	engine    *gin.Engine
-	cfg       *configs.Config
-	validator validation.Validation
-	db        database.IDatabase
+	engine      *gin.Engine
+	cfg         *configs.Config
+	validator   validation.Validation
+	db          database.IDatabase
+	minioClient *minio.MinioClient
 }
 
-func NewServer(validator validation.Validation, db database.IDatabase) *Server {
+func NewServer(validator validation.Validation, db database.IDatabase, minioClient *minio.MinioClient) *Server {
 	return &Server{
-		engine:    gin.Default(),
-		cfg:       configs.GetConfig(),
-		validator: validator,
-		db:        db,
+		engine:      gin.Default(),
+		cfg:         configs.GetConfig(),
+		validator:   validator,
+		db:          db,
+		minioClient: minioClient,
 	}
 }
 
@@ -70,6 +77,10 @@ func (s Server) MapRoutes() error {
 	routesV1.GET("/test", func(c *gin.Context) {
 		c.JSON(200, gin.H{"Test": "Call api"})
 	})
+
+	authHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
+	cardHttp.Routes(routesV1, s.db, s.validator)
+	ioHistoryHttp.Routes(routesV1, s.db, s.validator)
 
 	return nil
 }

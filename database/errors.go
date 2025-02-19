@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ErrRecordNotFound        = gorm.ErrRecordNotFound        // Không tìm thấy bản ghi
+	ErrRecordNotFound        = gorm.ErrRecordNotFound // Không tìm thấy bản ghi
+	ErrDuplicatedKey         = gorm.ErrDuplicatedKey
 	ErrInvalidTransaction    = gorm.ErrInvalidTransaction    // Transaction không hợp lệ
 	ErrNotImplemented        = gorm.ErrNotImplemented        // Tính năng chưa được hỗ trợ
 	ErrMissingWhereClause    = gorm.ErrMissingWhereClause    // Câu lệnh cập nhật hoặc xóa thiếu điều kiện WHERE

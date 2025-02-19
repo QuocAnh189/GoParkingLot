@@ -11,6 +11,7 @@ type User struct {
 	ID        string         `json:"id" gorm:"unique;not null;index;primary_key"`
 	Email     string         `json:"email" gorm:"unique;not null;index;primary_key"`
 	Name      string         `json:"name" gorm:"unique;not null;index;primary_key"`
+	AvatarUrl string         `json:"avatar_url"`
 	Password  string         `json:"password" gorm:"not null;"`
 	CreatedAt time.Time      `json:"createdAt" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`

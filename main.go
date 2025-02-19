@@ -5,6 +5,7 @@ import (
 	"goparking/database"
 	"goparking/internals/libs/logger"
 	"goparking/internals/libs/validation"
+	"goparking/pkgs/minio"
 	"sync"
 
 	userModel "goparking/domains/auth/model"
@@ -44,8 +45,20 @@ func main() {
 
 	validator := validation.New()
 
+	minioClient, err := minio.NewMinioClient(
+		cfg.MinioEndpoint,
+		cfg.MinioAccessKey,
+		cfg.MinioSecretKey,
+		cfg.MinioBucket,
+		cfg.MinioBaseurl,
+		cfg.MinioUseSSL,
+	)
+	if err != nil {
+		logger.Fatalf("Failed to connect to MinIO: %s", err)
+	}
+
 	// Initialize HTTP server
-	httpSvr := httpServer.NewServer(validator, db)
+	httpSvr := httpServer.NewServer(validator, db, minioClient)
 
 	var wg sync.WaitGroup
 	wg.Add(1)

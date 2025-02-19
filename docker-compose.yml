@@ -9,6 +9,12 @@ services:
         HTTP_PORT: 8080
         AUTH_SECRET: ######
         DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
+        MINIO_ENDPOINT: parking.minio:9000
+        MINIO_ACCESSKEY: b8psyEWauoDjytZjizEz
+        MINIO_SECRETKEY: LkGSk5JoldvbLK9t8NzFKkf8QtREV46F4s6jBz5h
+        MINIO_BUCKET: goparking
+        MINIO_BASEURL: http://localhost:9000
+        MINIO_USESSL: false
     ports:
       - "8002:8080"
     depends_on:
@@ -35,9 +41,9 @@ services:
     image: minio/minio:latest
     container_name: parking.minio
     ports:
-      - "9000:9000" # MinIO Console
-      - "9001:9001" # MinIO Admin Console
-    restart: always
+      - "9000:9000" # MinIO API
+      - "9001:9001" # MinIO Console
+    restart: unless-stopped
     volumes:
       - parking_minio_data:/data
       - parking_minio_config:/root/.minio
@@ -45,6 +51,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
     command: server /data --console-address ":9001"
+
 
 networks:
   default:

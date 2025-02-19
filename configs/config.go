@@ -14,10 +14,16 @@ const (
 )
 
 type Config struct {
-	Environment string `mapstructure:"ENVIRONMENT"`
-	HttpPort    int    `mapstructure:"HTTP_PORT"`
-	AuthSecret  string `mapstructure:"AUTH_SECRET"`
-	DatabaseURI string `mapstructure:"DATABASE_URI"`
+	Environment    string `mapstructure:"ENVIRONMENT"`
+	HttpPort       int    `mapstructure:"HTTP_PORT"`
+	AuthSecret     string `mapstructure:"AUTH_SECRET"`
+	DatabaseURI    string `mapstructure:"DATABASE_URI"`
+	MinioEndpoint  string `mapstructure:"MINIO_ENDPOINT"`
+	MinioAccessKey string `mapstructure:"MINIO_ACCESSKEY"`
+	MinioSecretKey string `mapstructure:"MINIO_SECRETKEY"`
+	MinioBucket    string `mapstructure:"MINIO_BUCKET"`
+	MinioBaseurl   string `mapstructure:"MINIO_BASEURL"`
+	MinioUseSSL    bool   `mapstructure:"MINIO_USESSL"`
 }
 
 var (
