@@ -4,8 +4,11 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: parking.api
-    env_file:
-      - app.env
+    environment:
+        ENVIRONMENT: production
+        HTTP_PORT: 8080
+        AUTH_SECRET: ######
+        DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
     ports:
       - "8002:8080"
     depends_on:
@@ -20,7 +23,7 @@ services:
     container_name: parking.db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: QuocAnh-1809
+      POSTGRES_PASSWORD: password123
       POSTGRES_DB: parkinglot
     ports:
       - "5433:5432"
