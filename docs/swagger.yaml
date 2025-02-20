@@ -1,3 +1,51 @@
+definitions:
+  dto.CreateCardRequest:
+    properties:
+      card_type:
+        type: string
+      expired_date:
+        type: string
+      license_plate:
+        type: string
+      owner_name:
+        type: string
+      rfid:
+        type: string
+      vehicle_type:
+        type: string
+    type: object
+  dto.SignInRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.UpdateCardRequest:
+    properties:
+      card_type:
+        type: string
+      expired_date:
+        type: string
+      id:
+        type: string
+      license_plate:
+        type: string
+      owner_name:
+        type: string
+      rfid:
+        type: string
+      vehicle_type:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      error: {}
+    type: object
 info:
   contact:
     email: anhquoc18092003@gmail.com
@@ -9,7 +57,207 @@ info:
   termsOfService: http://swagger.io/terms/
   title: GoParking Swagger API
   version: "1.0"
-paths: {}
+paths:
+  /api/v1/auth/signin:
+    post:
+      description: Authenticates the user based on the provided credentials and returns
+        a sign-in response if successful.
+      parameters:
+      - description: Body
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully signed in
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - Invalid credentials
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - User not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Signin a user
+      tags:
+      - Auth
+  /api/v1/auth/signup:
+    post:
+      description: Registers a new user with the provided details. Returns a sign-in
+        response upon successful registration.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully registered
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid user input
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Signup a new user
+      tags:
+      - Auth
+  /api/v1/cards:
+    get:
+      description: Fetches a paginated list of cards based on the provided filter
+        parameters.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of cards
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a list of cards
+      tags:
+      - Cards
+    post:
+      description: Creates a new card based on the provided details.
+      parameters:
+      - description: Body
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCardRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Card created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new card
+      tags:
+      - Cards
+  /api/v1/cards/{id}:
+    delete:
+      description: Delete a new card based on the provided details.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Delete updated successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete a card
+      tags:
+      - Cards
+    get:
+      description: Fetches the details of a specific card based on the provided card
+        ID.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the card
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Event with the specified ID not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a card by its ID
+      tags:
+      - Cards
+    put:
+      description: Update a new card based on the provided details.
+      parameters:
+      - description: Body
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCardRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Card updated successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a card
+      tags:
+      - Cards
 securityDefinitions:
   ApiKeyAuth:
     in: header

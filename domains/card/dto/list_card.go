@@ -15,6 +15,6 @@ type ListCardRequest struct {
 }
 
 type ListCardResponse struct {
-	Coupon     []*model.Card      `json:"items"`
+	Cards      []*model.Card      `json:"items"`
 	Pagination *paging.Pagination `json:"metadata"`
 }

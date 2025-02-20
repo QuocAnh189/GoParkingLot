@@ -9,12 +9,12 @@ const (
 type Pagination struct {
 	Page        int64 `json:"page"`
 	Size        int64 `json:"size"`
-	TakeAll     bool  `json:"takeAll"`
+	TakeAll     bool  `json:"take_all"`
 	Skip        int64 `json:"skip"`
-	TotalCount  int64 `json:"totalCount"`
-	TotalPages  int64 `json:"totalPages"`
-	HasPrevious bool  `json:"hasPrevious"`
-	HasNext     bool  `json:"hasNext"`
+	TotalCount  int64 `json:"total_count"`
+	TotalPages  int64 `json:"total_pages"`
+	HasPrevious bool  `json:"has_previous"`
+	HasNext     bool  `json:"has_next"`
 }
 
 func NewPagination(page int64, size int64, total int64) *Pagination {

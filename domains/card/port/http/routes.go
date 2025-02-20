@@ -6,6 +6,7 @@ import (
 	"goparking/domains/card/repository"
 	"goparking/domains/card/service"
 	"goparking/internals/libs/validation"
+	"goparking/pkgs/middleware"
 )
 
 func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.Validation) {
@@ -13,7 +14,8 @@ func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.V
 	cardService := service.NewCardService(validator, cardRepository)
 	cardHandler := NewCardHandler(cardService)
 
-	cardRoute := r.Group("/cards")
+	authMiddleware := middleware.JWTAuth()
+	cardRoute := r.Group("/cards").Use(authMiddleware)
 	{
 		cardRoute.GET("", cardHandler.GetListCards)
 		cardRoute.GET("/:id", cardHandler.GetCard)

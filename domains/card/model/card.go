@@ -12,7 +12,7 @@ type Card struct {
 	OwnerName    string         `json:"owner_name" gorm:"unique;not null;index"`
 	CardType     string         `json:"card_type" gorm:"not null;index"`
 	VehicleType  string         `json:"vehicle_type" gorm:"not null;index"`
-	LicensePlate string         `json:"license_plate" gorm:"not null;index"`
+	LicensePlate string         `json:"license_plate" gorm:"unique;not null;index"`
 	ExpiredDate  string         `json:"expired_date" gorm:"not null;index"`
 	CreatedAt    time.Time      `json:"createdAt" gorm:"autoCreateTime"`
 	UpdatedAt    time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`
