@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 # Sao chép các file đã build từ builder image
 WORKDIR /root
 COPY --from=builder /app/main .
-COPY --from=builder /app/app.env .
 COPY --from=builder /app/configs ./configs
 
 # Expose cổng 8080
