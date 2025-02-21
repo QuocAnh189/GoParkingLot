@@ -30,7 +30,7 @@ import (
 //	@name						Authorization
 
 func main() {
-	cfg := configs.LoadConfig(".")
+	cfg := configs.LoadConfig()
 	logger.Initialize(cfg.Environment)
 
 	db, err := database.NewDatabase(cfg.DatabaseURI)
