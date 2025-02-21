@@ -44,7 +44,7 @@ func (h *CardHandler) GetListCards(c *gin.Context) {
 	var res dto.ListCardResponse
 	utils.MapStruct(&res.Cards, cards)
 	res.Pagination = pagination
-	response.JSON(c, 200, res)
+	response.JSON(c, http.StatusOK, res)
 }
 
 //		@Summary	 Retrieve a card by its ID
@@ -64,6 +64,7 @@ func (h *CardHandler) GetCard(c *gin.Context) {
 	card, err := h.service.GetCardById(c, cardId)
 	if err != nil {
 		logger.Error("Failed to get card detail: ", err)
+		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
 		return
 	}
 
@@ -96,7 +97,7 @@ func (h *CardHandler) CreateCard(c *gin.Context) {
 		return
 	}
 
-	response.JSON(c, http.StatusOK, true)
+	response.JSON(c, http.StatusCreated, true)
 }
 
 //		@Summary	 Update a card

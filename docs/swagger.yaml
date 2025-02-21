@@ -258,6 +258,79 @@ paths:
       summary: Update a card
       tags:
       - Cards
+  /api/v1/io-histories:
+    get:
+      description: Fetches a paginated list of io_histories based on the provided
+        filter parameters.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of io_histories
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a list of io_histories
+      tags:
+      - IOHistory
+  /api/v1/io-histories/entrance:
+    post:
+      description: Fetches a paginated list of cards based on the provided filter
+        parameters.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: IOHistory created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Implement entrance
+      tags:
+      - IOHistory
+  /api/v1/io-histories/exit:
+    post:
+      description: Fetches a paginated list of cards based on the provided filter
+        parameters.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: IOHistory created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Implement entrance
+      tags:
+      - IOHistory
 securityDefinitions:
   ApiKeyAuth:
     in: header

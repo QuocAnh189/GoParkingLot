@@ -12,6 +12,7 @@ import (
 type ICardRepository interface {
 	GetCards(ctx context.Context, req *dto.ListCardRequest) ([]*model.Card, *paging.Pagination, error)
 	GetCardById(ctx context.Context, id string) (*model.Card, error)
+	GetCardByRFID(ctx context.Context, rfid string) (*model.Card, error)
 	CreatedCard(ctx context.Context, card *model.Card) error
 	UpdateCard(ctx context.Context, card *model.Card) error
 	DeleteCard(ctx context.Context, id string) error
@@ -32,6 +33,14 @@ func (c *CardRepository) GetCards(ctx context.Context, req *dto.ListCardRequest)
 	query := make([]database.Query, 0)
 	if req.Search != "" {
 		query = append(query, database.NewQuery("owner_name ILIKE ?", "%"+req.Search+"%"))
+	}
+
+	if req.CardType != "" {
+		query = append(query, database.NewQuery("card_type = ?", req.CardType))
+	}
+
+	if req.VehicleType != "" {
+		query = append(query, database.NewQuery("vehicle_type = ?", req.VehicleType))
 	}
 
 	order := "created_at DESC"
@@ -66,7 +75,17 @@ func (c *CardRepository) GetCards(ctx context.Context, req *dto.ListCardRequest)
 
 func (c *CardRepository) GetCardById(ctx context.Context, id string) (*model.Card, error) {
 	var card model.Card
-	if err := c.db.FindById(ctx, id, &card); err != nil {
+	query := database.NewQuery("id = ?", id)
+	if err := c.db.FindOne(ctx, &card, database.WithQuery(query), database.WithPreload([]string{"LastIOHistory"})); err != nil {
+		return nil, err
+	}
+	return &card, nil
+}
+
+func (c *CardRepository) GetCardByRFID(ctx context.Context, rfid string) (*model.Card, error) {
+	var card model.Card
+	query := database.NewQuery("rfid = ?", rfid)
+	if err := c.db.FindOne(ctx, &card, database.WithQuery(query), database.WithPreload([]string{"LastIOHistory"})); err != nil {
 		return nil, err
 	}
 	return &card, nil
@@ -87,3 +106,21 @@ func (c *CardRepository) DeleteCard(ctx context.Context, id string) error {
 	}
 	return c.db.Delete(ctx, card)
 }
+
+//query := make([]database.Query, 0)
+//args := make([]interface{}, 0)
+//
+//queryString := ""
+//if req.Search != "" {
+//queryString += "owner_name ILIKE ? AND card_type = ?"
+//args = append(args, "%"+req.Search+"%", req.CardType)
+//}
+//
+////if req.CardType != "" {
+////	queryString += " AND card_type = ?"
+////	args = append(args, req.CardType)
+////}
+//
+//if queryString != "" && len(args) != 0 {
+//query = append(query, database.NewQuery(queryString, args...))
+//}

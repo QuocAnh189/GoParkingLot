@@ -7,14 +7,25 @@ import (
 )
 
 type IOHistory struct {
-	ID        string         `json:"id" gorm:"unique;not null;index;primary_key"`
-	Type      string         `json:"type" gorm:"not null"`
-	CardId    string         `json:"card_id" gorm:"not null"`
-	ImageUrl  string         `json:"image_url" gorm:"not null"`
-	CropUrl   string         `json:"crop_url" gorm:"not null"`
-	CreatedAt time.Time      `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`
-	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	ID          string         `json:"id" gorm:"unique;not null;index;primary_key"`
+	Type        string         `json:"type" gorm:"not null"`
+	CardID      string         `json:"card_id" gorm:"not null"`
+	ImageUrl    string         `json:"image_url" gorm:"not null"`
+	CardType    string         `json:"card_type" gorm:"not null"`
+	VehicleType string         `json:"vehicle_type" gorm:"not null"`
+	CropUrl     string         `json:"crop_url" gorm:"not null"`
+	CreatedAt   time.Time      `json:"createdAt" gorm:"autoCreateTime"`
+	UpdatedAt   time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+}
+
+type Card struct {
+	ID           string `json:"id"`
+	OwnerName    string `json:"owner_name" `
+	CardType     string `json:"card_type"`
+	VehicleType  string `json:"vehicle_type" `
+	LicensePlate string `json:"license_plate"`
+	ExpiredDate  string `json:"expired_date"`
 }
 
 func (io *IOHistory) BeforeCreate(tx *gorm.DB) error {

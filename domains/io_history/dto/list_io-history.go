@@ -1,12 +1,12 @@
 package dto
 
 import (
-	"goparking/domains/card/model"
+	"goparking/domains/io_history/model"
 	"goparking/pkgs/paging"
 )
 
-type ListCardRequest struct {
-	Search      string `json:"search,omitempty" form:"search"`
+type ListIOHistoryRequest struct {
+	Type        string `json:"type,omitempty" form:"type"`
 	CardType    string `json:"card_type,omitempty" form:"card_type"`
 	VehicleType string `json:"vehicle_type,omitempty" form:"vehicle_type"`
 	Page        int64  `json:"-" form:"page"`
@@ -16,7 +16,7 @@ type ListCardRequest struct {
 	TakeAll     bool   `json:"-" form:"take_all"`
 }
 
-type ListCardResponse struct {
-	Cards      []*model.Card      `json:"items"`
-	Pagination *paging.Pagination `json:"metadata"`
+type ListIOHistoryResponse struct {
+	IOHistories []*model.IOHistory `json:"items"`
+	Pagination  *paging.Pagination `json:"metadata"`
 }

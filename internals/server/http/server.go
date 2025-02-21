@@ -80,7 +80,7 @@ func (s Server) MapRoutes() error {
 
 	authHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
 	cardHttp.Routes(routesV1, s.db, s.validator)
-	ioHistoryHttp.Routes(routesV1, s.db, s.validator)
+	ioHistoryHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
 
 	return nil
 }
