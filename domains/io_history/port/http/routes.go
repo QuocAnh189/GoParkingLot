@@ -7,6 +7,7 @@ import (
 	"goparking/domains/io_history/repository"
 	"goparking/domains/io_history/service"
 	"goparking/internals/libs/validation"
+	"goparking/pkgs/middleware"
 	"goparking/pkgs/minio"
 )
 
@@ -16,7 +17,8 @@ func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.V
 	ioHistoryService := service.NewIOHistoryService(validator, ioHistoryRepository, minioClient, cardRepository)
 	ioHistoryHandler := NewIOHistoryHandler(ioHistoryService)
 
-	ioHistoryRoute := r.Group("/io-histories")
+	authMiddleware := middleware.JWTAuth()
+	ioHistoryRoute := r.Group("/io-histories").Use(authMiddleware)
 	{
 		ioHistoryRoute.GET("", ioHistoryHandler.GetListIOHistories)
 		ioHistoryRoute.POST("/entrance", ioHistoryHandler.Entrance)
