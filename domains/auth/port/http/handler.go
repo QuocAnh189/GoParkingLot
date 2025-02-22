@@ -6,6 +6,7 @@ import (
 	"goparking/domains/auth/service"
 	"goparking/internals/libs/logger"
 	"goparking/pkgs/response"
+	"goparking/pkgs/utils"
 	"net/http"
 )
 
@@ -36,7 +37,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, err, "Invalid parameters")
 		return
 	}
-	accessToken, refreshToken, err := h.service.SignIn(c, &req)
+	accessToken, refreshToken, user, err := h.service.SignIn(c, &req)
 
 	if err != nil {
 		logger.Error("Failed to sign up ", err)
@@ -53,6 +54,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 	var res dto.SignInResponse
 	res.AccessToken = accessToken
 	res.RefreshToken = refreshToken
+	utils.MapStruct(&res.User, user)
 	response.JSON(c, http.StatusOK, res)
 }
 
@@ -73,7 +75,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	accessToken, refreshToken, err := h.service.SignUp(c, &req)
+	accessToken, refreshToken, user, err := h.service.SignUp(c, &req)
 	if err != nil {
 		logger.Error("Failed to sign up ", err)
 		response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
@@ -83,6 +85,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 	var res dto.SignUpResponse
 	res.AccessToken = accessToken
 	res.RefreshToken = refreshToken
+	utils.MapStruct(&res.User, user)
 
 	response.JSON(c, http.StatusOK, res)
 }

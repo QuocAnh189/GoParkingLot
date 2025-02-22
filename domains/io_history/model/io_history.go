@@ -14,9 +14,9 @@ type IOHistory struct {
 	CardType    string         `json:"card_type" gorm:"not null"`
 	VehicleType string         `json:"vehicle_type" gorm:"not null"`
 	CropUrl     string         `json:"crop_url" gorm:"not null"`
-	CreatedAt   time.Time      `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt   time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`
-	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	CreatedAt   time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt   time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
 type Card struct {

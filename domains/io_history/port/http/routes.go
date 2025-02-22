@@ -20,7 +20,7 @@ func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.V
 	authMiddleware := middleware.JWTAuth()
 	ioHistoryRoute := r.Group("/io-histories").Use(authMiddleware)
 	{
-		ioHistoryRoute.GET("", ioHistoryHandler.GetListIOHistories)
+		ioHistoryRoute.GET("/", ioHistoryHandler.GetListIOHistories)
 		ioHistoryRoute.POST("/entrance", ioHistoryHandler.Entrance)
 		ioHistoryRoute.POST("/exit", ioHistoryHandler.Exit)
 	}

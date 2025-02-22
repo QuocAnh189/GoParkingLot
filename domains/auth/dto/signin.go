@@ -8,4 +8,5 @@ type SignInRequest struct {
 type SignInResponse struct {
 	AccessToken  string `json:"accessToken" validate:"required"`
 	RefreshToken string `json:"refreshToken" validate:"required"`
+	User         *User  `json:"user" validate:"required"`
 }

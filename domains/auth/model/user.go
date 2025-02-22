@@ -13,9 +13,9 @@ type User struct {
 	Name      string         `json:"name" gorm:"unique;not null;index;primary_key"`
 	AvatarUrl string         `json:"avatar_url"`
 	Password  string         `json:"password" gorm:"not null;"`
-	CreatedAt time.Time      `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt time.Time      `json:"updatedAt" gorm:"autoUpdateTime"`
-	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) error {

@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"goparking/pkgs/minio"
+	"time"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -46,7 +47,15 @@ func (s Server) Run() error {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	s.engine.Use(cors.Default())
+	//s.engine.Use(cors.Default())
+	s.engine.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "access-control-allow-origin", "access-control-allow-headers"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	if err := s.MapRoutes(); err != nil {
 		logger.Fatalf("MapRoutes Error: %v", err)
@@ -55,7 +64,7 @@ func (s Server) Run() error {
 	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	s.engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Welcome to GoHub API"})
+		c.JSON(http.StatusOK, gin.H{"message": "Welcome to Goparking API"})
 	})
 
 	// Start http server
@@ -73,10 +82,6 @@ func (s Server) GetEngine() *gin.Engine {
 
 func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
-
-	routesV1.GET("/test", func(c *gin.Context) {
-		c.JSON(200, gin.H{"Test": "Call api"})
-	})
 
 	authHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
 	cardHttp.Routes(routesV1, s.db, s.validator)

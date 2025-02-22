@@ -17,9 +17,9 @@ type Card struct {
 	ExpiredDate     string                    `json:"expired_date" gorm:"not null;index"`
 	LastIOHistoryID string                    `json:"last_io_history_id" gorm:"default:null"` // Đổi sang con trỏ
 	LastIOHistory   *ioHistoryModel.IOHistory `json:"last_io_history" gorm:"foreignKey:LastIOHistoryID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	CreatedAt       time.Time                 `json:"createdAt" gorm:"autoCreateTime"`
-	UpdatedAt       time.Time                 `json:"updatedAt" gorm:"autoUpdateTime"`
-	DeletedAt       gorm.DeletedAt            `json:"deletedAt" gorm:"index"`
+	CreatedAt       time.Time                 `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt       time.Time                 `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt       gorm.DeletedAt            `json:"deleted_at" gorm:"index"`
 }
 
 func (card *Card) BeforeCreate(tx *gorm.DB) error {
