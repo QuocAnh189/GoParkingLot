@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	cardRepo "goparking/domains/card/repository"
 	"goparking/domains/io_history/dto"
 	"goparking/domains/io_history/model"
@@ -12,6 +14,10 @@ import (
 	"goparking/pkgs/minio"
 	"goparking/pkgs/paging"
 	"goparking/pkgs/utils"
+	"goparking/proto/gen/pb_detects"
+	"io"
+	"mime/multipart"
+	"time"
 )
 
 type IIOHistoryService interface {
@@ -62,6 +68,22 @@ func (io *IOHistoryService) Entrance(ctx context.Context, req *dto.CreateIoHisto
 		return nil, errors.New("same type IN")
 	}
 
+	var ioHistory *model.IOHistory
+	utils.MapStruct(&ioHistory, req)
+
+	listPlates, cropImgUrl, err := DetectPlate(req.Image)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(listPlates) == 0 {
+		return nil, errors.New("no plate")
+	}
+
+	if listPlates[0] != card.LicensePlate {
+		return nil, errors.New("license_plate not right")
+	}
+
 	var imageUrlUpload = ""
 	if req.Image != nil {
 		imageURL, err := io.minioClient.UploadFile(ctx, req.Image, "io_histories")
@@ -72,10 +94,8 @@ func (io *IOHistoryService) Entrance(ctx context.Context, req *dto.CreateIoHisto
 		imageUrlUpload = imageURL
 	}
 
-	var ioHistory *model.IOHistory
-	utils.MapStruct(&ioHistory, req)
 	ioHistory.ImageUrl = imageUrlUpload
-	ioHistory.CropUrl = "http:hahaha"
+	ioHistory.CropUrl = cropImgUrl
 	ioHistory.CardID = card.ID
 	ioHistory.CardType = card.CardType
 	ioHistory.VehicleType = card.VehicleType
@@ -100,11 +120,30 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 		return nil, nil, nil, errors.New("the car is not in the yard")
 	}
 
+	if card.LastIOHistory == nil {
+		return nil, nil, nil, errors.New("license_plate not right")
+	}
+
 	if card.LastIOHistory != nil && card.LastIOHistory.Type == req.Type {
 		return nil, nil, nil, errors.New("same type OUT")
 	}
 
 	var inHistory = card.LastIOHistory
+	var outHistory *model.IOHistory
+	utils.MapStruct(&outHistory, req)
+
+	listPlates, cropImgUrl, err := DetectPlate(req.Image)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	if len(listPlates) == 0 {
+		return nil, nil, nil, errors.New("no plate")
+	}
+
+	if listPlates[0] != card.LicensePlate {
+		return nil, nil, nil, errors.New("license_plate not right")
+	}
 
 	var imageUrlUpload = ""
 	if req.Image != nil {
@@ -116,10 +155,8 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 		imageUrlUpload = imageURL
 	}
 
-	var outHistory *model.IOHistory
-	utils.MapStruct(&outHistory, req)
 	outHistory.ImageUrl = imageUrlUpload
-	outHistory.CropUrl = "http:hahaha"
+	outHistory.CropUrl = cropImgUrl
 	outHistory.CardID = card.ID
 	outHistory.CardType = card.CardType
 	outHistory.VehicleType = card.VehicleType
@@ -131,4 +168,39 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 	var dataCard model.Card
 	utils.MapStruct(&dataCard, card)
 	return outHistory, inHistory, &dataCard, nil
+}
+
+func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
+	// Mở file từ FileHeader
+	file, err := image.Open()
+	if err != nil {
+		return nil, "", err
+	}
+	defer file.Close()
+
+	// Đọc nội dung file thành []byte
+	imageData, err := io.ReadAll(file)
+	if err != nil {
+		return nil, "", err
+	}
+
+	conn, err := grpc.NewClient("146.190.86.175:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, "", err
+	}
+	defer conn.Close()
+
+	client := pb_detects.NewPlateDetectionClient(conn)
+
+	req := &pb_detects.PlateRequest{Image: imageData}
+
+	ctxTimeout, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	response, err := client.Detect(ctxTimeout, req)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return response.LicensePlateDetect, response.CropImgUrl, nil
 }

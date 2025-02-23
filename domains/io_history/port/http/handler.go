@@ -74,6 +74,12 @@ func (h *IOHistoryHandler) Entrance(c *gin.Context) {
 		case "invalid card":
 			response.Error(c, http.StatusConflict, err, "invalid card")
 			return
+		case "no plate":
+			response.Error(c, http.StatusConflict, err, "no plate")
+			return
+		case "license_plate not right":
+			response.Error(c, http.StatusConflict, err, "license_plate not right")
+			return
 		}
 		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
 		return
@@ -112,6 +118,12 @@ func (h *IOHistoryHandler) Exit(c *gin.Context) {
 			return
 		case "the car is not in the yard":
 			response.Error(c, http.StatusConflict, err, "the car is not in the yard")
+			return
+		case "no plate":
+			response.Error(c, http.StatusConflict, err, "no plate")
+			return
+		case "license_plate not right":
+			response.Error(c, http.StatusConflict, err, "license_plate not right")
 			return
 		}
 		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
