@@ -106,21 +106,3 @@ func (c *CardRepository) DeleteCard(ctx context.Context, id string) error {
 	}
 	return c.db.Delete(ctx, card)
 }
-
-//query := make([]database.Query, 0)
-//args := make([]interface{}, 0)
-//
-//queryString := ""
-//if req.Search != "" {
-//queryString += "owner_name ILIKE ? AND card_type = ?"
-//args = append(args, "%"+req.Search+"%", req.CardType)
-//}
-//
-////if req.CardType != "" {
-////	queryString += " AND card_type = ?"
-////	args = append(args, req.CardType)
-////}
-//
-//if queryString != "" && len(args) != 0 {
-//query = append(query, database.NewQuery(queryString, args...))
-//}

@@ -15,7 +15,7 @@ type Card struct {
 	VehicleType     string                    `json:"vehicle_type" gorm:"not null;index"`
 	LicensePlate    string                    `json:"license_plate" gorm:"unique;not null;index"`
 	ExpiredDate     string                    `json:"expired_date" gorm:"not null;index"`
-	LastIOHistoryID string                    `json:"last_io_history_id" gorm:"default:null"` // Đổi sang con trỏ
+	LastIOHistoryID *string                   `json:"last_io_history_id" gorm:"default:null"` // Đổi sang con trỏ
 	LastIOHistory   *ioHistoryModel.IOHistory `json:"last_io_history" gorm:"foreignKey:LastIOHistoryID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt       time.Time                 `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt       time.Time                 `json:"updated_at" gorm:"autoUpdateTime"`

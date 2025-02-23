@@ -77,7 +77,7 @@ func (io *IOHistoryRepository) ImplementEntrance(ctx context.Context, ioHistory 
 			return err
 		}
 
-		card.LastIOHistoryID = ioHistory.ID
+		card.LastIOHistoryID = &ioHistory.ID
 		card.LastIOHistory = nil
 		if err := io.db.Update(ctx, card); err != nil {
 			return err
@@ -99,7 +99,7 @@ func (io *IOHistoryRepository) ImplementExit(ctx context.Context, ioHistory *mod
 			return err
 		}
 
-		card.LastIOHistoryID = ioHistory.ID
+		card.LastIOHistoryID = &ioHistory.ID
 		card.LastIOHistory = nil
 		if err := io.db.Update(ctx, card); err != nil {
 			return err

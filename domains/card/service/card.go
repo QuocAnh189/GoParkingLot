@@ -75,6 +75,9 @@ func (c *CardService) UpdateCard(ctx context.Context, id string, req *dto.Update
 	}
 
 	utils.MapStruct(card, req)
+	//if req.LastIOHistoryID == nil {
+	//	card.LastIOHistoryID = nil
+	//}
 	err = c.cardRepo.UpdateCard(ctx, card)
 	if err != nil {
 		logger.Errorf("Update fail, id: %s, error: %s", id, err)
