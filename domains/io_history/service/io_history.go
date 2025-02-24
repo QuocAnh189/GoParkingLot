@@ -205,7 +205,7 @@ func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
 	}
 
 	//146.190.86.175:50051 - Place your grpc server
-	conn, err := grpc.NewClient("146.190.86.175 :50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("146.190.86.175:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, "", err
 	}
