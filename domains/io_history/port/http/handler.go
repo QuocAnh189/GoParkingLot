@@ -74,6 +74,9 @@ func (h *IOHistoryHandler) Entrance(c *gin.Context) {
 		case "invalid card":
 			response.Error(c, http.StatusConflict, err, "invalid card")
 			return
+		case "expired date":
+			response.Error(c, http.StatusConflict, err, "expired date")
+			return
 		case "no plate":
 			response.Error(c, http.StatusConflict, err, "no plate")
 			return
@@ -115,6 +118,9 @@ func (h *IOHistoryHandler) Exit(c *gin.Context) {
 			return
 		case "invalid card":
 			response.Error(c, http.StatusConflict, err, "invalid card")
+			return
+		case "expired date":
+			response.Error(c, http.StatusConflict, err, "expired date")
 			return
 		case "the car is not in the yard":
 			response.Error(c, http.StatusConflict, err, "the car is not in the yard")

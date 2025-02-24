@@ -9,6 +9,7 @@ type ListIOHistoryRequest struct {
 	Type        string `json:"type,omitempty" form:"type"`
 	CardType    string `json:"card_type,omitempty" form:"card_type"`
 	VehicleType string `json:"vehicle_type,omitempty" form:"vehicle_type"`
+	Date        string `json:"date,omitempty" form:"date"`
 	Page        int64  `json:"-" form:"page"`
 	Limit       int64  `json:"-" form:"size"`
 	OrderBy     string `json:"-" form:"order_by"`

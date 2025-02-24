@@ -41,6 +41,10 @@ func (io *IOHistoryRepository) GetIOHistories(ctx context.Context, req *dto.List
 		query = append(query, database.NewQuery("vehicle_type = ?", req.VehicleType))
 	}
 
+	if req.Date != "" {
+		query = append(query, database.NewQuery("DATE(created_at) = ?", req.Date))
+	}
+
 	order := "created_at DESC"
 	if req.OrderBy != "" {
 		order = req.OrderBy

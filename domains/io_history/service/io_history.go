@@ -64,6 +64,16 @@ func (io *IOHistoryService) Entrance(ctx context.Context, req *dto.CreateIoHisto
 		return nil, errors.New("invalid card")
 	}
 
+	layout := "2006-01-02"
+	expiredTime, err := time.Parse(layout, card.ExpiredDate)
+	if err != nil {
+		return nil, errors.New("invalid expired date format")
+	}
+
+	if expiredTime.Before(time.Now()) {
+		return nil, errors.New("expired date")
+	}
+
 	if card.LastIOHistory != nil && card.LastIOHistory.Type == req.Type {
 		return nil, errors.New("same type IN")
 	}
@@ -114,6 +124,16 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 	card, err := io.cardRepo.GetCardByRFID(ctx, req.Rfid)
 	if err != nil {
 		return nil, nil, nil, errors.New("invalid card")
+	}
+
+	layout := "2006-01-02"
+	expiredTime, err := time.Parse(layout, card.ExpiredDate)
+	if err != nil {
+		return nil, nil, nil, errors.New("invalid expired date format")
+	}
+
+	if expiredTime.Before(time.Now()) {
+		return nil, nil, nil, errors.New("expired date")
 	}
 
 	if card.LastIOHistory == nil {
@@ -184,7 +204,8 @@ func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
 		return nil, "", err
 	}
 
-	conn, err := grpc.NewClient("146.190.86.175:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	//146.190.86.175:50051
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, "", err
 	}
