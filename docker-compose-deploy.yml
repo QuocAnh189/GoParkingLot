@@ -15,10 +15,10 @@ services:
       MINIO_BUCKET: goparking
       #      MINIO_BASEURL: http://139.59.250.218:9000
       #      MINIO_USESSL: false
-      MINIO_BASEURL: http://goparking.duckdns.org:9000
-      MINIO_USESSL: false
       #      MINIO_BASEURL: http://goparking.duckdns.org:9000
-      #      MINIO_USESSL: true
+      #      MINIO_USESSL: false
+      MINIO_BASEURL: https://goparking.duckdns.org:9000
+      MINIO_USESSL: true
     depends_on:
       - parking.db
       - parking.minio
@@ -70,7 +70,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":9001" --certs-dir /etc/letsencrypt/live/goparking.duckdns.org
 
 networks:
   default:
