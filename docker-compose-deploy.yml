@@ -13,19 +13,17 @@ services:
       MINIO_ACCESSKEY: 1d1KqQif0abfpxQaxyy0
       MINIO_SECRETKEY: i9n4WD3PFSzc6XFZkow69UWV5dGx6bZbmMIjaNlU
       MINIO_BUCKET: goparking
-#      MINIO_BASEURL: http://139.59.250.218:9000
-#      MINIO_USESSL: false
+      #      MINIO_BASEURL: http://139.59.250.218:9000
+      #      MINIO_USESSL: false
       MINIO_BASEURL: http://goparking.duckdns.org:9000
       MINIO_USESSL: false
-#    ports:
-#      - "8002:8080"
     depends_on:
       - parking.db
       - parking.minio
     restart: unless-stopped
     volumes:
       - .:/app
-      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/letsencrypt/live/goparking.duckdns.org:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # 🛠️ Mount đúng thư mục
 
   nginx:
     build:
@@ -33,13 +31,13 @@ services:
       dockerfile: Dockerfile
     container_name: parking.nginx
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "8080:80" # 🛠️ Map đúng cổng HTTP
+      - "8443:443" # 🛠️ Map đúng cổng HTTPS
     depends_on:
       - parking.api
     restart: unless-stopped
     volumes:
-      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/letsencrypt/live/goparking.duckdns.org:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # 🛠️ Mount đúng thư mục chứng chỉ
 
   parking.db:
     image: postgres:16
@@ -69,7 +67,6 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin123
     command: server /data --console-address ":9001"
 
-
 networks:
   default:
     name: parking
@@ -82,3 +79,8 @@ volumes:
     name: parking_minio_data
   parking_minio_config:
     name: parking_minio_config
+
+
+
+
+
