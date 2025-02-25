@@ -68,9 +68,15 @@ func (s Server) Run() error {
 	})
 
 	// Start http server
-	logger.Info("HTTP server is listening on PORT: ", s.cfg.HttpPort)
-	if err := s.engine.Run(fmt.Sprintf(":%d", s.cfg.HttpPort)); err != nil {
-		logger.Fatalf("Running HTTP server: %v", err)
+	//logger.Info("HTTP server is listening on PORT: ", s.cfg.HttpPort)
+	//if err := s.engine.Run(fmt.Sprintf(":%d", s.cfg.HttpPort)); err != nil {
+	//	logger.Fatalf("Running HTTP server: %v", err)
+	//}
+
+	if err := s.engine.RunTLS(fmt.Sprintf(":%d", s.cfg.HttpPort),
+		"/etc/letsencrypt/live/goparking.duckdns.org/fullchain.pem",
+		"/etc/letsencrypt/live/goparking.duckdns.org/privkey.pem"); err != nil {
+		logger.Fatalf("Running HTTPS server failed: %v", err)
 	}
 
 	return nil

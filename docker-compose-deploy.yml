@@ -13,8 +13,10 @@ services:
       MINIO_ACCESSKEY: 1d1KqQif0abfpxQaxyy0
       MINIO_SECRETKEY: i9n4WD3PFSzc6XFZkow69UWV5dGx6bZbmMIjaNlU
       MINIO_BUCKET: goparking
-      MINIO_BASEURL: http://139.59.250.218:9000
-      MINIO_USESSL: false
+#      MINIO_BASEURL: http://139.59.250.218:9000
+#      MINIO_USESSL: false
+      MINIO_BASEURL: https://goparking.duckdns.org:9000
+      MINIO_USESSL: true
     ports:
       - "8002:8080"
     depends_on:
@@ -23,6 +25,8 @@ services:
     restart: unless-stopped
     volumes:
       - .:/app
+      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/ssl/certs
+      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/ssl/private
 
   parking.db:
     image: postgres:16
