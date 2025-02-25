@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"goparking/pkgs/minio"
+	"os"
 	"time"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -73,9 +74,18 @@ func (s Server) Run() error {
 	//	logger.Fatalf("Running HTTP server: %v", err)
 	//}
 
-	if err := s.engine.RunTLS(fmt.Sprintf(":%d", s.cfg.HttpPort),
-		"/etc/letsencrypt/live/goparking.duckdns.org/fullchain.pem",
-		"/etc/letsencrypt/live/goparking.duckdns.org/privkey.pem"); err != nil {
+	certFile := "/etc/letsencrypt/live/goparking.duckdns.org/fullchain.pem"
+	keyFile := "/etc/letsencrypt/live/goparking.duckdns.org/privkey.pem"
+
+	if _, err := os.Stat(certFile); os.IsNotExist(err) {
+		logger.Fatalf("Certificate file not found: %s", certFile)
+	}
+	if _, err := os.Stat(keyFile); os.IsNotExist(err) {
+		logger.Fatalf("Private key file not found: %s", keyFile)
+	}
+
+	// Run HTTPS server
+	if err := s.engine.RunTLS(fmt.Sprintf(":%d", s.cfg.HttpPort), certFile, keyFile); err != nil {
 		logger.Fatalf("Running HTTPS server failed: %v", err)
 	}
 
