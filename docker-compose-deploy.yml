@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     volumes:
       - .:/app
-      - /etc/letsencrypt:/etc/letsencrypt:ro  # 🛠️ Mount đúng thư mục
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 
   nginx:
     build:
@@ -31,13 +31,13 @@ services:
       dockerfile: Dockerfile
     container_name: parking.nginx
     ports:
-      - "8080:80" # 🛠️ Map đúng cổng HTTP
-      - "8443:443" # 🛠️ Map đúng cổng HTTPS
+      - "8080:80" # 🛠️ Map Port HTTP
+      - "8443:443" # 🛠️ Map Port HTTPS
     depends_on:
       - parking.api
     restart: unless-stopped
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro  # 🛠️ Mount đúng thư mục chứng chỉ
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 
   parking.db:
     image: postgres:16
