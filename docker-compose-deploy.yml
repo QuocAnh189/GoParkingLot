@@ -15,8 +15,8 @@ services:
       MINIO_BUCKET: goparking
 #      MINIO_BASEURL: http://139.59.250.218:9000
 #      MINIO_USESSL: false
-      MINIO_BASEURL: https://goparking.duckdns.org:9000
-      MINIO_USESSL: true
+      MINIO_BASEURL: http://goparking.duckdns.org:9000
+      MINIO_USESSL: false
     ports:
       - "8002:8080"
     depends_on:
