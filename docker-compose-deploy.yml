@@ -9,7 +9,7 @@ services:
       HTTP_PORT: 8080
       AUTH_SECRET: ######
       DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
-      MINIO_ENDPOINT: parking.minio:9000
+      MINIO_ENDPOINT: goparking.duckdns.org/minio
       MINIO_ACCESSKEY: 1d1KqQif0abfpxQaxyy0
       MINIO_SECRETKEY: i9n4WD3PFSzc6XFZkow69UWV5dGx6bZbmMIjaNlU
       MINIO_BUCKET: goparking
