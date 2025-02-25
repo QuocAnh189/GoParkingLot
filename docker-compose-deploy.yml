@@ -25,8 +25,7 @@ services:
     restart: unless-stopped
     volumes:
       - .:/app
-      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/ssl/certs
-      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/ssl/private
+      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/letsencrypt/live/goparking.duckdns.org:ro
 
   parking.db:
     image: postgres:16

@@ -22,9 +22,6 @@ WORKDIR /root
 COPY --from=builder /app/main .
 COPY --from=builder /app/configs ./configs
 
-# Copy chứng chỉ SSL vào container, Nếu bạn sử dụng https
-COPY /etc/letsencrypt/live/goparking.duckdns.org/fullchain.pem /etc/ssl/certs/fullchain.pem
-COPY /etc/letsencrypt/live/goparking.duckdns.org/privkey.pem /etc/ssl/private/privkey.pem
 
 # Expose cổng 8080
 EXPOSE 8080
