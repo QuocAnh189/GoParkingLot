@@ -66,7 +66,7 @@ services:
     volumes:
       - parking_minio_data:/data
       - parking_minio_config:/root/.minio
-      - /etc/letsencrypt:/etc/minio/certs:ro
+#      - /etc/letsencrypt:/etc/minio/certs:ro
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
