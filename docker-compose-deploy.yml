@@ -59,9 +59,9 @@ services:
   parking.minio:
     image: minio/minio:latest
     container_name: parking.minio
-#    ports:
-#      - "9000:9000" # MinIO API
-#      - "9001:9001" # MinIO Console
+    ports:
+      - "9000:9000" # MinIO API
+      - "9001:9001" # MinIO Console
     restart: unless-stopped
     volumes:
       - parking_minio_data:/data
