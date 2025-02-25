@@ -70,6 +70,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_BROWSER_REDIRECT_URL: https://goparking.duckdns.org/minio-webui/
     command: server /data --console-address ":9001" --certs-dir /etc/letsencrypt/live/goparking.duckdns.org
 
 networks:
