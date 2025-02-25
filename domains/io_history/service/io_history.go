@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"crypto/tls"
 	"errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -213,7 +212,7 @@ func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
 	//defer conn.Close()
 
 	// Load chứng chỉ TLS (Sử dụng hệ thống CA mặc định)
-	creds := credentials.NewTLS(&tls.Config{})
+	creds := credentials.NewClientTLSFromCert(nil, "")
 
 	// Kết nối tới gRPC Server qua HTTPS (nginx reverse proxy)
 	conn, err := grpc.NewClient("license-detect.duckdns.org:9443", grpc.WithTransportCredentials(creds))
