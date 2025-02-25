@@ -17,7 +17,7 @@ func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.V
 	authMiddleware := middleware.JWTAuth()
 	cardRoute := r.Group("/cards").Use(authMiddleware)
 	{
-		cardRoute.GET("/", cardHandler.GetListCards)
+		cardRoute.GET("", cardHandler.GetListCards)
 		cardRoute.GET("/:id", cardHandler.GetCard)
 		cardRoute.POST("/", cardHandler.CreateCard)
 		cardRoute.PUT("/:id", cardHandler.UpdateCard)
