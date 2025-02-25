@@ -15,8 +15,10 @@ services:
       MINIO_BUCKET: goparking
       #      MINIO_BASEURL: http://139.59.250.218:9000
       #      MINIO_USESSL: false
-      MINIO_BASEURL: http://goparking.duckdns.org:9000
-      MINIO_USESSL: false
+      #      MINIO_BASEURL: http://goparking.duckdns.org:9000
+      #      MINIO_USESSL: false
+      MINIO_BASEURL: https://goparking.duckdns.org/minio/
+      MINIO_USESSL: true
     depends_on:
       - parking.db
       - parking.minio
@@ -31,14 +33,15 @@ services:
       dockerfile: Dockerfile
     container_name: parking.nginx
     ports:
-      - "8080:80" # 🛠️ Map Port HTTP
-      - "8443:443" # 🛠️ Map Port HTTPS for api
-      - "8444:444" # 🛠️ Map Port HTTPS for minio
+      - "8080:80" # 🛠️ API HTTP
+      - "8443:443" # 🛠️ API HTTPS
     depends_on:
       - parking.api
+      - parking.minio
     restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   parking.db:
     image: postgres:16
@@ -56,17 +59,18 @@ services:
   parking.minio:
     image: minio/minio:latest
     container_name: parking.minio
-    ports:
-      - "9000:9000" # MinIO API
-      - "9001:9001" # MinIO Console
+#    ports:
+#      - "9000:9000" # MinIO API
+#      - "9001:9001" # MinIO Console
     restart: unless-stopped
     volumes:
       - parking_minio_data:/data
       - parking_minio_config:/root/.minio
+      - /etc/letsencrypt:/etc/minio/certs:ro
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
-    command: server /data --console-address ":9001" --certs-dir /etc/minio/certs
+    command: server /data --console-address ":9001"
 
 networks:
   default:
