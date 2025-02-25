@@ -32,7 +32,8 @@ services:
     container_name: parking.nginx
     ports:
       - "8080:80" # 🛠️ Map Port HTTP
-      - "8443:443" # 🛠️ Map Port HTTPS
+      - "8443:443" # 🛠️ Map Port HTTPS for api
+      - "8444:444" # 🛠️ Map Port HTTPS for minio
     depends_on:
       - parking.api
     restart: unless-stopped
