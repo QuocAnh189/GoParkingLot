@@ -17,14 +17,28 @@ services:
 #      MINIO_USESSL: false
       MINIO_BASEURL: http://goparking.duckdns.org:9000
       MINIO_USESSL: false
-    ports:
-      - "8002:8080"
+#    ports:
+#      - "8002:8080"
     depends_on:
       - parking.db
       - parking.minio
     restart: unless-stopped
     volumes:
       - .:/app
+      - /etc/letsencrypt/live/goparking.duckdns.org:/etc/letsencrypt/live/goparking.duckdns.org:ro
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: parking.nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      - parking.api
+    restart: unless-stopped
+    volumes:
       - /etc/letsencrypt/live/goparking.duckdns.org:/etc/letsencrypt/live/goparking.duckdns.org:ro
 
   parking.db:

@@ -5,7 +5,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"goparking/pkgs/minio"
-	"os"
 	"time"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -68,25 +67,10 @@ func (s Server) Run() error {
 		c.JSON(http.StatusOK, gin.H{"message": "Welcome to Goparking API"})
 	})
 
-	// Start http server
-	//logger.Info("HTTP server is listening on PORT: ", s.cfg.HttpPort)
-	//if err := s.engine.Run(fmt.Sprintf(":%d", s.cfg.HttpPort)); err != nil {
-	//	logger.Fatalf("Running HTTP server: %v", err)
-	//}
-
-	certFile := "/etc/letsencrypt/live/goparking.duckdns.org/fullchain.pem"
-	keyFile := "/etc/letsencrypt/live/goparking.duckdns.org/privkey.pem"
-
-	if _, err := os.Stat(certFile); os.IsNotExist(err) {
-		logger.Fatalf("Certificate file not found: %s", certFile)
-	}
-	if _, err := os.Stat(keyFile); os.IsNotExist(err) {
-		logger.Fatalf("Private key file not found: %s", keyFile)
-	}
-
-	// Run HTTPS server
-	if err := s.engine.RunTLS(fmt.Sprintf(":%d", s.cfg.HttpPort), certFile, keyFile); err != nil {
-		logger.Fatalf("Running HTTPS server failed: %v", err)
+	//Start http server
+	logger.Info("HTTP server is listening on PORT: ", s.cfg.HttpPort)
+	if err := s.engine.Run(fmt.Sprintf(":%d", s.cfg.HttpPort)); err != nil {
+		logger.Fatalf("Running HTTP server: %v", err)
 	}
 
 	return nil
