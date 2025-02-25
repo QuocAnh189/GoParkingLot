@@ -15,10 +15,10 @@ services:
       MINIO_BUCKET: goparking
       #      MINIO_BASEURL: http://139.59.250.218:9000
       #      MINIO_USESSL: false
+      MINIO_BASEURL: http://goparking.duckdns.org:9000
+      MINIO_USESSL: false
       #      MINIO_BASEURL: http://goparking.duckdns.org:9000
-      #      MINIO_USESSL: false
-      MINIO_BASEURL: https://goparking.duckdns.org/minio/
-      MINIO_USESSL: true
+      #      MINIO_USESSL: true
     depends_on:
       - parking.db
       - parking.minio
@@ -37,11 +37,11 @@ services:
       - "8443:443" # 🛠️ API HTTPS
     depends_on:
       - parking.api
-      - parking.minio
+#      - parking.minio
     restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   parking.db:
     image: postgres:16
