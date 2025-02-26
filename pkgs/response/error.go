@@ -20,5 +20,6 @@ func Error(c *gin.Context, status int, err error, message string) {
 		errorRes["debug"] = err.Error()
 	}
 
+	c.Header("Content-Type", "application/json")
 	c.JSON(status, ErrorResponse{Data: errorRes})
 }
