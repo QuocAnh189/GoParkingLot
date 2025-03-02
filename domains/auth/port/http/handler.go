@@ -91,5 +91,25 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 }
 
 func (h *AuthHandler) SignOut(c *gin.Context) {
-	response.JSON(c, 200, "SignOut")
+	token := c.GetHeader("Authorization")
+	if token == "" {
+		response.Error(c, http.StatusBadRequest, nil, "Missing Authorization header")
+		return
+	}
+
+	// Giả sử userID được lấy từ context khi decode token
+	userID, exists := c.Get("userId")
+	if !exists {
+		response.Error(c, http.StatusUnauthorized, nil, "Unauthorized")
+		return
+	}
+
+	err := h.service.SignOut(c, userID.(string), token)
+	if err != nil {
+		logger.Error("Failed to sign out", err)
+		response.Error(c, http.StatusInternalServerError, err, "Failed to sign out")
+		return
+	}
+
+	response.JSON(c, http.StatusOK, "Logout successfully")
 }

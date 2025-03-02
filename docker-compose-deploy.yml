@@ -37,11 +37,10 @@ services:
       - "8443:443" # 🛠️ API HTTPS
     depends_on:
       - parking.api
-#      - parking.minio
+      - parking.minio
     restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   parking.db:
     image: postgres:16

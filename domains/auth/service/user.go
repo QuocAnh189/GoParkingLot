@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"goparking/domains/auth/dto"
 	"goparking/domains/auth/model"
@@ -11,26 +12,34 @@ import (
 	"goparking/internals/libs/validation"
 	"goparking/pkgs/jwt"
 	"goparking/pkgs/minio"
+	"goparking/pkgs/redis"
 	"goparking/pkgs/utils"
+	"strings"
 )
 
 type IUserService interface {
 	SignIn(ctx context.Context, req *dto.SignInRequest) (string, string, *model.User, error)
 	SignUp(ctx context.Context, req *dto.SignUpRequest) (string, string, *model.User, error)
-	SignOut(ctx context.Context) error
+	SignOut(ctx context.Context, userID string, token string) error
 }
 
 type UserService struct {
 	validator   validation.Validation
 	userRepo    repository.IUserRepository
 	minioClient *minio.MinioClient
+	cache       redis.IRedis
 }
 
-func NewUserService(validator validation.Validation, userRepo repository.IUserRepository, minioClient *minio.MinioClient) *UserService {
+func NewUserService(
+	validator validation.Validation,
+	userRepo repository.IUserRepository,
+	minioClient *minio.MinioClient,
+	cache redis.IRedis) *UserService {
 	return &UserService{
 		validator:   validator,
 		userRepo:    userRepo,
 		minioClient: minioClient,
+		cache:       cache,
 	}
 }
 
@@ -96,6 +105,16 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 	return accessToken, refreshToken, user, nil
 }
 
-func (u *UserService) SignOut(ctx context.Context) error {
+func (u *UserService) SignOut(ctx context.Context, userID string, token string) error {
+	value := `{"status": "blacklisted"}`
+
+	// Lưu vào Redis với TTL 24 giờ
+	err := u.cache.Set(fmt.Sprintf("blacklist:%s", strings.ReplaceAll(token, " ", "_")), value)
+	if err != nil {
+		logger.Error("Failed to blacklist token: ", err)
+		return err
+	}
+
+	logger.Info("User signed out successfully")
 	return nil
 }

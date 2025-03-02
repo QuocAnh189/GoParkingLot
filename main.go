@@ -6,6 +6,7 @@ import (
 	"goparking/internals/libs/logger"
 	"goparking/internals/libs/validation"
 	"goparking/pkgs/minio"
+	"goparking/pkgs/redis"
 	"sync"
 
 	userModel "goparking/domains/auth/model"
@@ -57,8 +58,14 @@ func main() {
 		logger.Fatalf("Failed to connect to MinIO: %s", err)
 	}
 
+	cache := redis.New(redis.Config{
+		Address:  cfg.RedisURI,
+		Password: cfg.RedisPassword,
+		Database: cfg.RedisDB,
+	})
+
 	// Initialize HTTP server
-	httpSvr := httpServer.NewServer(validator, db, minioClient)
+	httpSvr := httpServer.NewServer(validator, db, minioClient, cache)
 
 	var wg sync.WaitGroup
 	wg.Add(1)

@@ -16,7 +16,6 @@ type MinioClient struct {
 	BaseURL string
 }
 
-// NewMinioClient khởi tạo Minio client
 func NewMinioClient(endpoint, accessKey, secretKey, bucket, baseURL string, useSSL bool) (*MinioClient, error) {
 	client, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
@@ -65,6 +64,5 @@ func (m *MinioClient) UploadFile(ctx context.Context, file *multipart.FileHeader
 		return "", err
 	}
 
-	// Trả về URL ảnh đã upload
 	return fmt.Sprintf("%s/%s/%s", m.BaseURL, m.Bucket, objectName), nil
 }

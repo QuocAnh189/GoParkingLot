@@ -52,7 +52,6 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin123
     command: server /data --console-address ":9001"
 
-
 networks:
   default:
     name: parking

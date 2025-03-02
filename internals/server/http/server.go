@@ -17,6 +17,7 @@ import (
 	"net/http"
 
 	"goparking/configs"
+	"goparking/pkgs/redis"
 
 	authHttp "goparking/domains/auth/port/http"
 	cardHttp "goparking/domains/card/port/http"
@@ -29,15 +30,17 @@ type Server struct {
 	validator   validation.Validation
 	db          database.IDatabase
 	minioClient *minio.MinioClient
+	cache       redis.IRedis
 }
 
-func NewServer(validator validation.Validation, db database.IDatabase, minioClient *minio.MinioClient) *Server {
+func NewServer(validator validation.Validation, db database.IDatabase, minioClient *minio.MinioClient, cache redis.IRedis) *Server {
 	return &Server{
 		engine:      gin.Default(),
 		cfg:         configs.GetConfig(),
 		validator:   validator,
 		db:          db,
 		minioClient: minioClient,
+		cache:       cache,
 	}
 }
 
@@ -83,9 +86,9 @@ func (s Server) GetEngine() *gin.Engine {
 func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
 
-	authHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
-	cardHttp.Routes(routesV1, s.db, s.validator)
-	ioHistoryHttp.Routes(routesV1, s.db, s.validator, s.minioClient)
+	authHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache)
+	cardHttp.Routes(routesV1, s.db, s.validator, s.cache)
+	ioHistoryHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache)
 
 	return nil
 }
