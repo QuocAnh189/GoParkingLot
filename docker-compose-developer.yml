@@ -15,11 +15,15 @@ services:
         MINIO_BUCKET: goparking
         MINIO_BASEURL: http://localhost:9000
         MINIO_USESSL: false
+        REDIS_URI: parking.redis:6379
+        REDIS_PASSWORD: password
+        REDIS_DB: 0
     ports:
       - "8002:8080"
     depends_on:
       - parking.db
       - parking.minio
+      - parking.redis
     restart: unless-stopped
     volumes:
       - .:/app
@@ -52,6 +56,20 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin123
     command: server /data --console-address ":9001"
 
+  parking.redis:
+    image: redis:latest
+    container_name: parking.redis
+    restart: unless-stopped
+    ports:
+      - "6389:6379"
+    volumes:
+      - parking_redis_data:/data
+    environment:
+      REDIS_PASSWORD: password
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 0
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "password" ]
+
 networks:
   default:
     name: parking
@@ -64,3 +82,5 @@ volumes:
     name: parking_minio_data
   parking_minio_config:
     name: parking_minio_config
+  parking_redis_data:
+    name: parking_redis_data
