@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
+	"goparking/configs"
 	cardRepo "goparking/domains/card/repository"
 	"goparking/domains/io_history/dto"
 	"goparking/domains/io_history/model"
@@ -191,6 +193,7 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 }
 
 func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
+	conf := configs.GetConfig()
 	// Mở file từ FileHeader
 	file, err := image.Open()
 	if err != nil {
@@ -204,22 +207,21 @@ func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
 		return nil, "", err
 	}
 
-	////146.190.86.175:50051 - Place your grpc server
-	//conn, err := grpc.NewClient("146.190.86.175:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	//if err != nil {
-	//	return nil, "", err
-	//}
-	//defer conn.Close()
-
-	// Load chứng chỉ TLS (Sử dụng hệ thống CA mặc định)
-	creds := credentials.NewClientTLSFromCert(nil, "")
-
-	// Kết nối tới gRPC Server qua HTTPS (nginx reverse proxy)
-	conn, err := grpc.NewClient("license-detect.duckdns.org:9443", grpc.WithTransportCredentials(creds))
+	conn, err := grpc.NewClient(fmt.Sprintf("localhost:%d", conf.GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, "", err
 	}
 	defer conn.Close()
+
+	//// Load TLS Cert - Deploy Https
+	//creds := credentials.NewClientTLSFromCert(nil, "")
+	//
+	//// Kết nối tới gRPC Server qua HTTPS (nginx reverse proxy)
+	//conn, err := grpc.NewClient("license-detect.duckdns.org:9443", grpc.WithTransportCredentials(creds))
+	//if err != nil {
+	//	return nil, "", err
+	//}
+	//defer conn.Close()
 
 	client := pb_detects.NewPlateDetectionClient(conn)
 

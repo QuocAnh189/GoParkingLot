@@ -7,6 +7,7 @@ services:
     environment:
         ENVIRONMENT: production
         HTTP_PORT: 8080
+        GRPC_PORT: 50051
         AUTH_SECRET: ######
         DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
         MINIO_ENDPOINT: parking.minio:9000

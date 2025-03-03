@@ -16,6 +16,7 @@ const (
 type Config struct {
 	Environment    string `mapstructure:"ENVIRONMENT"`
 	HttpPort       int    `mapstructure:"HTTP_PORT"`
+	GrpcPort       int    `mapstructure:"GRPC_PORT"`
 	AuthSecret     string `mapstructure:"AUTH_SECRET"`
 	DatabaseURI    string `mapstructure:"DATABASE_URI"`
 	MinioEndpoint  string `mapstructure:"MINIO_ENDPOINT"`
@@ -47,6 +48,7 @@ func LoadConfig() *Config {
 	cfg = Config{
 		Environment:    viper.GetString("ENVIRONMENT"),
 		HttpPort:       viper.GetInt("HTTP_PORT"),
+		GrpcPort:       viper.GetInt("GRPC_PORT"),
 		AuthSecret:     viper.GetString("AUTH_SECRET"),
 		DatabaseURI:    viper.GetString("DATABASE_URI"),
 		MinioEndpoint:  viper.GetString("MINIO_ENDPOINT"),
