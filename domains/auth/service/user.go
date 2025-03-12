@@ -108,7 +108,6 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 func (u *UserService) SignOut(ctx context.Context, userID string, token string) error {
 	value := `{"status": "blacklisted"}`
 
-	// Lưu vào Redis với TTL 24 giờ
 	err := u.cache.Set(fmt.Sprintf("blacklist:%s", strings.ReplaceAll(token, " ", "_")), value)
 	if err != nil {
 		logger.Error("Failed to blacklist token: ", err)

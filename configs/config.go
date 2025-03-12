@@ -57,7 +57,7 @@ func LoadConfig() *Config {
 		MinioBucket:    viper.GetString("MINIO_BUCKET"),
 		MinioBaseurl:   viper.GetString("MINIO_BASEURL"),
 		MinioUseSSL:    viper.GetBool("MINIO_USESSL"),
-		RedisURI:       viper.GetString("REDIS_URI"), // ✅ Đảm bảo đọc REDIS_URI
+		RedisURI:       viper.GetString("REDIS_URI"),
 		RedisPassword:  viper.GetString("REDIS_PASSWORD"),
 		RedisDB:        viper.GetInt("REDIS_DB"),
 	}

@@ -90,6 +90,14 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 	response.JSON(c, http.StatusOK, res)
 }
 
+//		@Summary	 Signout a user
+//	 @Description Registers a new user with the provided details. Returns a sign-in response upon successful registration.
+//		@Tags		 Auth
+//		@Produce	 json
+//		@Success	 200	{object}	response.Response	"User successfully logout"
+//		@Failure	 404	{object}	response.Response	"Not Found"
+//		@Failure	 500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
+//		@Router		 /api/v1/auth/signout [post]
 func (h *AuthHandler) SignOut(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	if token == "" {
@@ -97,10 +105,9 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 		return
 	}
 
-	// Giả sử userID được lấy từ context khi decode token
 	userID, exists := c.Get("userId")
 	if !exists {
-		response.Error(c, http.StatusUnauthorized, nil, "Unauthorized")
+		response.Error(c, http.StatusNotFound, nil, "Unauthorized")
 		return
 	}
 
