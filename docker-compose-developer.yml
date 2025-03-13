@@ -11,8 +11,8 @@ services:
         AUTH_SECRET: ######
         DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
         MINIO_ENDPOINT: parking.minio:9000
-        MINIO_ACCESSKEY: b8psyEWauoDjytZjizEz
-        MINIO_SECRETKEY: LkGSk5JoldvbLK9t8NzFKkf8QtREV46F4s6jBz5h
+        MINIO_ACCESSKEY: 3SYhDzVQBrLI9SzRB1zR
+        MINIO_SECRETKEY: 8LJFPwOg4jscApFpAwawnbTKHNcyTd6y60mOzZbs
         MINIO_BUCKET: goparking
         MINIO_BASEURL: http://localhost:9000
         MINIO_USESSL: false
