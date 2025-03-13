@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"encoding/json"
-	"goparking/pkgs/jwt"
+	"goparking/pkgs/token"
 	"log"
 
 	"google.golang.org/grpc"
@@ -14,11 +14,13 @@ import (
 
 type AuthInterceptor struct {
 	ignoredMethods []string
+	token          token.IMarker
 }
 
-func NewAuthInterceptor(ignoredMethods []string) *AuthInterceptor {
+func NewAuthInterceptor(ignoredMethods []string, token token.IMarker) *AuthInterceptor {
 	return &AuthInterceptor{
 		ignoredMethods: ignoredMethods,
+		token:          token,
 	}
 }
 
@@ -28,7 +30,7 @@ func (ai *AuthInterceptor) authorize(ctx context.Context) (context.Context, stri
 		return ctx, "", status.New(codes.Unauthenticated, "missing token").Err()
 	}
 
-	payload, err := jwt.ValidateToken(m["token"][0])
+	payload, err := ai.token.ValidateToken(m["token"][0])
 	if err != nil {
 		return ctx, "", status.New(codes.Unauthenticated, "unauthorized").Err()
 	}
@@ -43,7 +45,7 @@ func (ai *AuthInterceptor) authorize(ctx context.Context) (context.Context, stri
 		}
 	}
 
-	return ctx, payload["id"].(string), nil
+	return ctx, payload.ID, nil
 }
 
 func (ai *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {

@@ -9,6 +9,8 @@ services:
         HTTP_PORT: 8080
         GRPC_PORT: 50051
         AUTH_SECRET: ######
+        ACCESS_TOKEN_DURATION: 15m
+        REFRESH_TOKEN_DURATION: 24h
         DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
         MINIO_ENDPOINT: parking.minio:9000
         MINIO_ACCESSKEY: 3SYhDzVQBrLI9SzRB1zR
@@ -75,6 +77,7 @@ networks:
   default:
     name: parking
     driver: bridge
+
 
 volumes:
   parking_postgres_data:

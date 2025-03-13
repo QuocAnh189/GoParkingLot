@@ -3,10 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"goparking/configs"
 	cardRepo "goparking/domains/card/repository"
 	"goparking/domains/io_history/dto"
 	"goparking/domains/io_history/model"
@@ -20,6 +16,9 @@ import (
 	"io"
 	"mime/multipart"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type IIOHistoryService interface {
@@ -193,7 +192,7 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 }
 
 func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
-	conf := configs.GetConfig()
+	// conf := configs.GetConfig()
 	// Mở file từ FileHeader
 	file, err := image.Open()
 	if err != nil {
@@ -207,7 +206,9 @@ func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
 		return nil, "", err
 	}
 
-	conn, err := grpc.NewClient(fmt.Sprintf("localhost:%d", conf.GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// conn, err := grpc.NewClient(fmt.Sprintf("localhost:%d", conf.GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("plate_detector:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+
 	if err != nil {
 		return nil, "", err
 	}

@@ -4,17 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"goparking/domains/auth/dto"
 	"goparking/domains/auth/model"
 	"goparking/domains/auth/repository"
 	"goparking/internals/libs/logger"
 	"goparking/internals/libs/validation"
-	"goparking/pkgs/jwt"
 	"goparking/pkgs/minio"
 	"goparking/pkgs/redis"
+	"goparking/pkgs/token"
 	"goparking/pkgs/utils"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type IUserService interface {
@@ -28,18 +29,22 @@ type UserService struct {
 	userRepo    repository.IUserRepository
 	minioClient *minio.MinioClient
 	cache       redis.IRedis
+	token       token.IMarker
 }
 
 func NewUserService(
 	validator validation.Validation,
 	userRepo repository.IUserRepository,
 	minioClient *minio.MinioClient,
-	cache redis.IRedis) *UserService {
+	cache redis.IRedis,
+	token token.IMarker,
+) *UserService {
 	return &UserService{
 		validator:   validator,
 		userRepo:    userRepo,
 		minioClient: minioClient,
 		cache:       cache,
+		token:       token,
 	}
 }
 
@@ -57,13 +62,14 @@ func (u *UserService) SignIn(ctx context.Context, req *dto.SignInRequest) (strin
 		return "", "", nil, errors.New("wrong message")
 	}
 
-	tokenData := map[string]interface{}{
-		"id":    user.ID,
-		"email": user.Email,
+	tokenData := token.AuthPayload{
+		ID:    user.ID,
+		Email: user.Email,
+		Role:  "",
 	}
 
-	accessToken := jwt.GenerateAccessToken(tokenData)
-	refreshToken := jwt.GenerateRefreshToken(tokenData)
+	accessToken := u.token.GenerateAccessToken(&tokenData)
+	refreshToken := u.token.GenerateRefreshToken(&tokenData)
 
 	return accessToken, refreshToken, user, nil
 }
@@ -75,7 +81,6 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 
 	var avatarUrlUpload = ""
 	if req.Avatar != nil {
-		//logger.Fatal(req.Avatar)
 		avatarURL, err := u.minioClient.UploadFile(ctx, req.Avatar, "users")
 		if err != nil {
 			logger.Errorf("Failed to upload avatar: %s", err)
@@ -94,13 +99,14 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 		return "", "", nil, err
 	}
 
-	tokenData := map[string]interface{}{
-		"id":    user.ID,
-		"email": user.Email,
+	tokenData := token.AuthPayload{
+		ID:    user.ID,
+		Email: user.Email,
+		Role:  "",
 	}
 
-	accessToken := jwt.GenerateAccessToken(tokenData)
-	refreshToken := jwt.GenerateRefreshToken(tokenData)
+	accessToken := u.token.GenerateAccessToken(&tokenData)
+	refreshToken := u.token.GenerateRefreshToken(&tokenData)
 
 	return accessToken, refreshToken, user, nil
 }

@@ -3,24 +3,35 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"goparking/internals/libs/logger"
 	"net/http"
 	"strings"
 
-	"goparking/pkgs/jwt"
+	"github.com/gin-gonic/gin"
+
 	"goparking/pkgs/redis"
+	"goparking/pkgs/token"
 )
 
-func JWTAuth(cache redis.IRedis) gin.HandlerFunc {
-	return JWT(jwt.AccessTokenType, cache)
+type AuthMiddleware struct {
+	token token.IMarker
 }
 
-func JWTRefresh(cache redis.IRedis) gin.HandlerFunc {
-	return JWT(jwt.RefreshTokenType, cache)
+func NewAuthMiddleware(token token.IMarker) *AuthMiddleware {
+	return &AuthMiddleware{
+		token: token,
+	}
 }
 
-func JWT(tokenType string, cache redis.IRedis) gin.HandlerFunc {
+func (a *AuthMiddleware) TokenAuth(cache redis.IRedis) gin.HandlerFunc {
+	return a.Token(token.AccessTokenType, cache)
+}
+
+func (a *AuthMiddleware) TokenRefresh(cache redis.IRedis) gin.HandlerFunc {
+	return a.Token(token.RefreshTokenType, cache)
+}
+
+func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
@@ -48,15 +59,15 @@ func JWT(tokenType string, cache redis.IRedis) gin.HandlerFunc {
 			return
 		}
 
-		payload, err := jwt.ValidateToken(token)
-		if err != nil || payload == nil || payload["type"] != tokenType {
+		payload, err := a.token.ValidateToken(token)
+		if err != nil || payload == nil || payload.Type != tokenType {
 			c.JSON(http.StatusUnauthorized, nil)
 			c.Abort()
 			return
 		}
 
-		c.Set("userId", payload["id"])
-		//c.Set("role", payload["role"])
+		c.Set("userId", payload.ID)
+		c.Set("role", payload.Role)
 		c.Set("token", token)
 		c.Next()
 	}

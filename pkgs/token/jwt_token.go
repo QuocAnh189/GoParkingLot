@@ -1,28 +1,40 @@
-package jwt
+package token
 
 import (
 	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt"
 	"goparking/internals/libs/logger"
+
+	"github.com/golang-jwt/jwt"
 
 	"goparking/configs"
 	"goparking/pkgs/utils"
 )
 
 const (
-	AccessTokenExpiredTime  = 5 * 24 * 3600
+	AccessTokenExpiredTime  = 5 * 60 * 60 // 5 hours
 	RefreshTokenExpiredTime = 30 * 24 * 3600
-	AccessTokenType         = "x-access"
-	RefreshTokenType        = "x-refresh"
 )
 
-func GenerateAccessToken(payload map[string]interface{}) string {
+type JTWMarker struct {
+	AccessTokenType  string
+	RefreshTokenType string
+}
+
+func NewJTWMarker() (*JTWMarker, error) {
+	return &JTWMarker{
+		AccessTokenType:  AccessTokenType,
+		RefreshTokenType: RefreshTokenType,
+	}, nil
+}
+
+func (j *JTWMarker) GenerateAccessToken(payload *AuthPayload) string {
 	cfg := configs.GetConfig()
-	payload["type"] = AccessTokenType
+	newPayload := NewAuthPayload(payload.ID, payload.Email, payload.Role, time.Minute, AccessTokenType)
+
 	tokenContent := jwt.MapClaims{
-		"payload": payload,
+		"payload": newPayload,
 		"exp":     time.Now().Add(time.Second * AccessTokenExpiredTime).Unix(),
 	}
 	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
@@ -35,11 +47,11 @@ func GenerateAccessToken(payload map[string]interface{}) string {
 	return token
 }
 
-func GenerateRefreshToken(payload map[string]interface{}) string {
+func (j *JTWMarker) GenerateRefreshToken(payload *AuthPayload) string {
 	cfg := configs.GetConfig()
-	payload["type"] = RefreshTokenType
+	newPayload := NewAuthPayload(payload.ID, payload.Email, payload.Role, time.Minute, RefreshTokenType)
 	tokenContent := jwt.MapClaims{
-		"payload": payload,
+		"payload": newPayload,
 		"exp":     time.Now().Add(time.Second * RefreshTokenExpiredTime).Unix(),
 	}
 	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
@@ -52,10 +64,9 @@ func GenerateRefreshToken(payload map[string]interface{}) string {
 	return token
 }
 
-func ValidateToken(jwtToken string) (map[string]interface{}, error) {
+func (j *JTWMarker) ValidateToken(jwtToken string) (*AuthPayload, error) {
 	cfg := configs.GetConfig()
 	cleanJWT := strings.Replace(jwtToken, "Bearer ", "", -1)
-
 	tokenData := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(cleanJWT, tokenData, func(token *jwt.Token) (interface{}, error) {
 		return []byte(cfg.AuthSecret), nil
@@ -69,7 +80,7 @@ func ValidateToken(jwtToken string) (map[string]interface{}, error) {
 		return nil, jwt.ErrInvalidKey
 	}
 
-	var data map[string]interface{}
+	var data *AuthPayload
 	utils.MapStruct(&data, tokenData["payload"])
 
 	return data, nil

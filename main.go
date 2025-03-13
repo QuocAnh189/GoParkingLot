@@ -7,6 +7,7 @@ import (
 	"goparking/internals/libs/validation"
 	"goparking/pkgs/minio"
 	"goparking/pkgs/redis"
+	"goparking/pkgs/token"
 	"sync"
 
 	userModel "goparking/domains/auth/model"
@@ -64,8 +65,13 @@ func main() {
 		Database: cfg.RedisDB,
 	})
 
+	tokenMaker, err := token.NewPasetoMaker()
+	if err != nil {
+		logger.Fatal(err)
+	}
+
 	// Initialize HTTP server
-	httpSvr := httpServer.NewServer(validator, db, minioClient, cache)
+	httpSvr := httpServer.NewServer(validator, db, minioClient, cache, tokenMaker)
 
 	var wg sync.WaitGroup
 	wg.Add(1)

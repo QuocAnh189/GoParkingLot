@@ -4,8 +4,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/spf13/viper"
 	"goparking/internals/libs/logger"
+
+	"github.com/spf13/viper"
 )
 
 const (
@@ -14,20 +15,22 @@ const (
 )
 
 type Config struct {
-	Environment    string `mapstructure:"ENVIRONMENT"`
-	HttpPort       int    `mapstructure:"HTTP_PORT"`
-	GrpcPort       int    `mapstructure:"GRPC_PORT"`
-	AuthSecret     string `mapstructure:"AUTH_SECRET"`
-	DatabaseURI    string `mapstructure:"DATABASE_URI"`
-	MinioEndpoint  string `mapstructure:"MINIO_ENDPOINT"`
-	MinioAccessKey string `mapstructure:"MINIO_ACCESSKEY"`
-	MinioSecretKey string `mapstructure:"MINIO_SECRETKEY"`
-	MinioBucket    string `mapstructure:"MINIO_BUCKET"`
-	MinioBaseurl   string `mapstructure:"MINIO_BASEURL"`
-	MinioUseSSL    bool   `mapstructure:"MINIO_USESSL"`
-	RedisURI       string `mapstructure:"REDIS_URI"`
-	RedisPassword  string `mapstructure:"REDIS_PASSWORD"`
-	RedisDB        int    `mapstructure:"REDIS_DB"`
+	Environment            string        `mapstructure:"ENVIRONMENT"`
+	HttpPort               int           `mapstructure:"HTTP_PORT"`
+	GrpcPort               int           `mapstructure:"GRPC_PORT"`
+	AuthSecret             string        `mapstructure:"AUTH_SECRET"`
+	Access_Token_Duration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	Refresh_Token_Duration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
+	DatabaseURI            string        `mapstructure:"DATABASE_URI"`
+	MinioEndpoint          string        `mapstructure:"MINIO_ENDPOINT"`
+	MinioAccessKey         string        `mapstructure:"MINIO_ACCESSKEY"`
+	MinioSecretKey         string        `mapstructure:"MINIO_SECRETKEY"`
+	MinioBucket            string        `mapstructure:"MINIO_BUCKET"`
+	MinioBaseurl           string        `mapstructure:"MINIO_BASEURL"`
+	MinioUseSSL            bool          `mapstructure:"MINIO_USESSL"`
+	RedisURI               string        `mapstructure:"REDIS_URI"`
+	RedisPassword          string        `mapstructure:"REDIS_PASSWORD"`
+	RedisDB                int           `mapstructure:"REDIS_DB"`
 }
 
 var (
@@ -46,20 +49,22 @@ func LoadConfig() *Config {
 	}
 
 	cfg = Config{
-		Environment:    viper.GetString("ENVIRONMENT"),
-		HttpPort:       viper.GetInt("HTTP_PORT"),
-		GrpcPort:       viper.GetInt("GRPC_PORT"),
-		AuthSecret:     viper.GetString("AUTH_SECRET"),
-		DatabaseURI:    viper.GetString("DATABASE_URI"),
-		MinioEndpoint:  viper.GetString("MINIO_ENDPOINT"),
-		MinioAccessKey: viper.GetString("MINIO_ACCESSKEY"),
-		MinioSecretKey: viper.GetString("MINIO_SECRETKEY"),
-		MinioBucket:    viper.GetString("MINIO_BUCKET"),
-		MinioBaseurl:   viper.GetString("MINIO_BASEURL"),
-		MinioUseSSL:    viper.GetBool("MINIO_USESSL"),
-		RedisURI:       viper.GetString("REDIS_URI"),
-		RedisPassword:  viper.GetString("REDIS_PASSWORD"),
-		RedisDB:        viper.GetInt("REDIS_DB"),
+		Environment:            viper.GetString("ENVIRONMENT"),
+		HttpPort:               viper.GetInt("HTTP_PORT"),
+		GrpcPort:               viper.GetInt("GRPC_PORT"),
+		AuthSecret:             viper.GetString("AUTH_SECRET"),
+		Access_Token_Duration:  viper.GetDuration("ACCESS_TOKEN_DURATION"),
+		Refresh_Token_Duration: viper.GetDuration("REFRESH_TOKEN_DURATION"),
+		DatabaseURI:            viper.GetString("DATABASE_URI"),
+		MinioEndpoint:          viper.GetString("MINIO_ENDPOINT"),
+		MinioAccessKey:         viper.GetString("MINIO_ACCESSKEY"),
+		MinioSecretKey:         viper.GetString("MINIO_SECRETKEY"),
+		MinioBucket:            viper.GetString("MINIO_BUCKET"),
+		MinioBaseurl:           viper.GetString("MINIO_BASEURL"),
+		MinioUseSSL:            viper.GetBool("MINIO_USESSL"),
+		RedisURI:               viper.GetString("REDIS_URI"),
+		RedisPassword:          viper.GetString("REDIS_PASSWORD"),
+		RedisDB:                viper.GetInt("REDIS_DB"),
 	}
 
 	if cfg.DatabaseURI == "" {

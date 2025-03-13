@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"goparking/database"
 	"goparking/domains/auth/repository"
 	"goparking/domains/auth/service"
@@ -9,14 +8,25 @@ import (
 	"goparking/pkgs/middleware"
 	"goparking/pkgs/minio"
 	"goparking/pkgs/redis"
+	"goparking/pkgs/token"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Routes(r *gin.RouterGroup, sqlDB database.IDatabase, validator validation.Validation, minioClient *minio.MinioClient, cache redis.IRedis) {
+func Routes(
+	r *gin.RouterGroup,
+	sqlDB database.IDatabase,
+	validator validation.Validation,
+	minioClient *minio.MinioClient,
+	cache redis.IRedis,
+	token token.IMarker,
+) {
 	userRepository := repository.NewUserRepository(sqlDB)
-	userService := service.NewUserService(validator, userRepository, minioClient, cache)
+	userService := service.NewUserService(validator, userRepository, minioClient, cache, token)
 	authHandler := NewAuthHandler(userService)
 
-	authMiddleware := middleware.JWTAuth(cache)
+	authMiddleware := middleware.NewAuthMiddleware(token).TokenAuth(cache)
+
 	authRouter := r.Group("/auth")
 	{
 		authRouter.POST("/signin", authHandler.SignIn)
