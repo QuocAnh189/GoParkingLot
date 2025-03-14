@@ -21,6 +21,7 @@ import (
 type IUserService interface {
 	SignIn(ctx context.Context, req *dto.SignInRequest) (string, string, *model.User, error)
 	SignUp(ctx context.Context, req *dto.SignUpRequest) (string, string, *model.User, error)
+	DeleteUser(ctx context.Context, id string) error
 	SignOut(ctx context.Context, userID string, token string) error
 }
 
@@ -109,6 +110,21 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 	refreshToken := u.token.GenerateRefreshToken(&tokenData)
 
 	return accessToken, refreshToken, user, nil
+}
+
+func (u *UserService) DeleteUser(ctx context.Context, id string) error {
+	user, err := u.userRepo.GetUserById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if err := u.userRepo.Delete(ctx, user); err != nil {
+		return err
+	}
+
+	u.minioClient.DeleteFile(ctx, user.AvatarUrl)
+
+	return nil
 }
 
 func (u *UserService) SignOut(ctx context.Context, userID string, token string) error {

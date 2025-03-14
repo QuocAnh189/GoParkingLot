@@ -38,7 +38,8 @@ func NewIOHistoryService(
 	validator validation.Validation,
 	ioHistoryRepo repository.IIOHistoryRepository,
 	minioClient *minio.MinioClient,
-	cardRepo cardRepo.ICardRepository) *IOHistoryService {
+	cardRepo cardRepo.ICardRepository,
+) *IOHistoryService {
 	return &IOHistoryService{
 		validator:     validator,
 		ioHistoryRepo: ioHistoryRepo,

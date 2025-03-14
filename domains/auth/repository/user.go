@@ -9,6 +9,7 @@ import (
 type IUserRepository interface {
 	Create(ctx context.Context, user *model.User) error
 	Update(ctx context.Context, user *model.User) error
+	Delete(ctx context.Context, user *model.User) error
 	GetUserById(ctx context.Context, id string) (*model.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
 }
@@ -27,6 +28,10 @@ func (r *UserRepository) Create(ctx context.Context, user *model.User) error {
 
 func (r *UserRepository) Update(ctx context.Context, user *model.User) error {
 	return r.db.Update(ctx, user)
+}
+
+func (r *UserRepository) Delete(ctx context.Context, user *model.User) error {
+	return r.db.Delete(ctx, user)
 }
 
 func (r *UserRepository) GetUserById(ctx context.Context, id string) (*model.User, error) {

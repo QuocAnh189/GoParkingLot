@@ -13,6 +13,13 @@ definitions:
         type: string
       vehicle_type:
         type: string
+    required:
+    - card_type
+    - expired_date
+    - license_plate
+    - owner_name
+    - rfid
+    - vehicle_type
     type: object
   dto.SignInRequest:
     properties:
@@ -32,6 +39,8 @@ definitions:
         type: string
       id:
         type: string
+      last_io_history_id:
+        type: string
       license_plate:
         type: string
       owner_name:
@@ -40,6 +49,14 @@ definitions:
         type: string
       vehicle_type:
         type: string
+    required:
+    - card_type
+    - expired_date
+    - id
+    - license_plate
+    - owner_name
+    - rfid
+    - vehicle_type
     type: object
   response.Response:
     properties:
@@ -58,6 +75,29 @@ info:
   title: GoParking Swagger API
   version: "1.0"
 paths:
+  /api/v1/auth/delete-user:
+    delete:
+      description: Registers a new user with the provided details. Returns a sign-in
+        response upon successful registration.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully registered
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete user
+      tags:
+      - Auth
   /api/v1/auth/signin:
     post:
       description: Authenticates the user based on the provided credentials and returns
@@ -90,6 +130,29 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: Signin a user
+      tags:
+      - Auth
+  /api/v1/auth/signout:
+    post:
+      description: Registers a new user with the provided details. Returns a sign-in
+        response upon successful registration.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully logout
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Signout a user
       tags:
       - Auth
   /api/v1/auth/signup:

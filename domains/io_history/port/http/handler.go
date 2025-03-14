@@ -1,13 +1,14 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"goparking/domains/io_history/dto"
 	"goparking/domains/io_history/service"
 	"goparking/internals/libs/logger"
 	"goparking/pkgs/response"
 	"goparking/pkgs/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type IOHistoryHandler struct {

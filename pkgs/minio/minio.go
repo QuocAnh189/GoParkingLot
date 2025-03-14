@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"mime/multipart"
+	"strings"
 	"time"
 
 	"github.com/minio/minio-go/v7"
@@ -16,7 +17,14 @@ type MinioClient struct {
 	BaseURL string
 }
 
-func NewMinioClient(endpoint, accessKey, secretKey, bucket, baseURL string, useSSL bool) (*MinioClient, error) {
+func NewMinioClient(
+	endpoint string,
+	accessKey string,
+	secretKey string,
+	bucket string,
+	baseURL string,
+	useSSL bool,
+) (*MinioClient, error) {
 	client, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: useSSL,
@@ -25,7 +33,6 @@ func NewMinioClient(endpoint, accessKey, secretKey, bucket, baseURL string, useS
 		return nil, err
 	}
 
-	// Kiểm tra bucket, nếu chưa có thì tạo
 	exists, err := client.BucketExists(context.Background(), bucket)
 	if err != nil {
 		return nil, err
@@ -65,4 +72,17 @@ func (m *MinioClient) UploadFile(ctx context.Context, file *multipart.FileHeader
 	}
 
 	return fmt.Sprintf("%s/%s/%s", m.BaseURL, m.Bucket, objectName), nil
+}
+
+func (m *MinioClient) DeleteFile(ctx context.Context, fileURL string) error {
+	err := m.Client.RemoveObject(ctx, m.Bucket, extractFilePath(fileURL, m.BaseURL, m.Bucket), minio.RemoveObjectOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func extractFilePath(fileURL, baseURL, bucket string) string {
+	trimmed := strings.TrimPrefix(fileURL, fmt.Sprintf("%s/%s/", baseURL, bucket))
+	return trimmed
 }

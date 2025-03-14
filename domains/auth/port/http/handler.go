@@ -1,13 +1,14 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"goparking/domains/auth/dto"
 	"goparking/domains/auth/service"
 	"goparking/internals/libs/logger"
 	"goparking/pkgs/response"
 	"goparking/pkgs/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
@@ -88,6 +89,27 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 	utils.MapStruct(&res.User, user)
 
 	response.JSON(c, http.StatusOK, res)
+}
+
+//		@Summary	 Delete user
+//	 @Description Registers a new user with the provided details. Returns a sign-in response upon successful registration.
+//		@Tags		 Auth
+//		@Produce	 json
+//		@Success	 200	{object}	response.Response	"User successfully registered"
+//		@Failure	 404	{object}	response.Response	"Not Found"
+//		@Failure	 500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
+//		@Router		 /api/v1/auth/delete-user [delete]
+func (h *AuthHandler) DeleteUser(c *gin.Context) {
+	userId := c.Param("id")
+
+	err := h.service.DeleteUser(c, userId)
+	if err != nil {
+		logger.Error("Failed to delete ", err)
+		response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
+		return
+	}
+
+	response.JSON(c, http.StatusOK, true)
 }
 
 //		@Summary	 Signout a user

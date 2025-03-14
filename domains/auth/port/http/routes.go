@@ -31,6 +31,7 @@ func Routes(
 	{
 		authRouter.POST("/signin", authHandler.SignIn)
 		authRouter.POST("/signup", authHandler.SignUp)
+		authRouter.DELETE("/delete-user/:id", authHandler.DeleteUser)
 		authRouter.POST("/signout", authMiddleware, authHandler.SignOut)
 	}
 }

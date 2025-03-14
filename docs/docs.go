@@ -23,6 +23,38 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/auth/delete-user": {
+            "delete": {
+                "description": "Registers a new user with the provided details. Returns a sign-in response upon successful registration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Delete user",
+                "responses": {
+                    "200": {
+                        "description": "User successfully registered",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/signin": {
             "post": {
                 "description": "Authenticates the user based on the provided credentials and returns a sign-in response if successful.",
@@ -59,6 +91,38 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found - User not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/signout": {
+            "post": {
+                "description": "Registers a new user with the provided details. Returns a sign-in response upon successful registration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Signout a user",
+                "responses": {
+                    "200": {
+                        "description": "User successfully logout",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -416,6 +480,14 @@ const docTemplate = `{
     "definitions": {
         "dto.CreateCardRequest": {
             "type": "object",
+            "required": [
+                "card_type",
+                "expired_date",
+                "license_plate",
+                "owner_name",
+                "rfid",
+                "vehicle_type"
+            ],
             "properties": {
                 "card_type": {
                     "type": "string"
@@ -454,6 +526,15 @@ const docTemplate = `{
         },
         "dto.UpdateCardRequest": {
             "type": "object",
+            "required": [
+                "card_type",
+                "expired_date",
+                "id",
+                "license_plate",
+                "owner_name",
+                "rfid",
+                "vehicle_type"
+            ],
             "properties": {
                 "card_type": {
                     "type": "string"
@@ -462,6 +543,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "last_io_history_id": {
                     "type": "string"
                 },
                 "license_plate": {

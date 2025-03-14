@@ -65,7 +65,7 @@ func main() {
 		Database: cfg.RedisDB,
 	})
 
-	tokenMaker, err := token.NewPasetoMaker()
+	tokenMaker, err := token.NewJTWMarker()
 	if err != nil {
 		logger.Fatal(err)
 	}

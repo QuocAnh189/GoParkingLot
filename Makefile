@@ -1,6 +1,6 @@
-up-docker-compose-developer:
-	docker-compose -f docker-compose-developer.yml up -d
-down-docker-compose-developer:
+ docker-compose up:
+	docker-compose -f docker-compose-developer.yml up --build -d
+ docker-compose down:
 	docker-compose -f docker-compose-developer.yml down
 
 generate-proto:
