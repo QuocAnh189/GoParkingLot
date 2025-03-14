@@ -3,6 +3,8 @@ package token
 import (
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Different types of error returned by the VerifyToken function
@@ -16,6 +18,7 @@ type AuthPayload struct {
 	Email     string    `json:"email"`
 	Role      string    `json:"role"`
 	Type      string    `json:"type"`
+	Jit       string    `json:"jit"`
 	ExpiredAt time.Time `json:"expired_at"`
 }
 
@@ -25,6 +28,7 @@ func NewAuthPayload(id string, email string, role string, duration time.Duration
 		Email:     email,
 		Role:      role,
 		Type:      type_auth,
+		Jit:       uuid.New().String(),
 		ExpiredAt: time.Now().Add(duration),
 	}
 	return payload

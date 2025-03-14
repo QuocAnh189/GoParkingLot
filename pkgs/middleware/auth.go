@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"goparking/internals/libs/logger"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -40,10 +39,16 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 			return
 		}
 
+		payload, err := a.token.ValidateToken(token)
+		if err != nil || payload == nil || payload.Type != tokenType {
+			c.JSON(http.StatusUnauthorized, nil)
+			c.Abort()
+			return
+		}
+
 		// Lấy dữ liệu từ Redis
 		var rawValue string
-		err := cache.Get(fmt.Sprintf("blacklist:%s", strings.ReplaceAll(token, " ", "_")), &rawValue)
-		if err != nil {
+		if err := cache.Get(fmt.Sprintf("blacklist:%s_%s", payload.ID, payload.Jit), &rawValue); err != nil {
 			logger.Error("Failed to get value from Redis:", err)
 		}
 
@@ -59,15 +64,9 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 			return
 		}
 
-		payload, err := a.token.ValidateToken(token)
-		if err != nil || payload == nil || payload.Type != tokenType {
-			c.JSON(http.StatusUnauthorized, nil)
-			c.Abort()
-			return
-		}
-
 		c.Set("userId", payload.ID)
 		c.Set("role", payload.Role)
+		c.Set("jit", payload.Jit)
 		c.Set("token", token)
 		c.Next()
 	}

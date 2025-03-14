@@ -13,7 +13,6 @@ import (
 	"goparking/pkgs/redis"
 	"goparking/pkgs/token"
 	"goparking/pkgs/utils"
-	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,7 +21,7 @@ type IUserService interface {
 	SignIn(ctx context.Context, req *dto.SignInRequest) (string, string, *model.User, error)
 	SignUp(ctx context.Context, req *dto.SignUpRequest) (string, string, *model.User, error)
 	DeleteUser(ctx context.Context, id string) error
-	SignOut(ctx context.Context, userID string, token string) error
+	SignOut(ctx context.Context, userID string, jit string) error
 }
 
 type UserService struct {
@@ -127,10 +126,11 @@ func (u *UserService) DeleteUser(ctx context.Context, id string) error {
 	return nil
 }
 
-func (u *UserService) SignOut(ctx context.Context, userID string, token string) error {
+func (u *UserService) SignOut(ctx context.Context, userID string, jit string) error {
 	value := `{"status": "blacklisted"}`
 
-	err := u.cache.Set(fmt.Sprintf("blacklist:%s", strings.ReplaceAll(token, " ", "_")), value)
+	// err := u.cache.Set(fmt.Sprintf("blacklist:%s", strings.ReplaceAll(token, " ", "_")), value)
+	err := u.cache.Set(fmt.Sprintf("blacklist:%s_%s", userID, jit), value)
 	if err != nil {
 		logger.Error("Failed to blacklist token: ", err)
 		return err

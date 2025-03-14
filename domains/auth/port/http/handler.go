@@ -127,13 +127,15 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 		return
 	}
 
+	jit := c.GetString("jit")
+
 	userID, exists := c.Get("userId")
 	if !exists {
 		response.Error(c, http.StatusNotFound, nil, "Unauthorized")
 		return
 	}
 
-	err := h.service.SignOut(c, userID.(string), token)
+	err := h.service.SignOut(c, userID.(string), jit)
 	if err != nil {
 		logger.Error("Failed to sign out", err)
 		response.Error(c, http.StatusInternalServerError, err, "Failed to sign out")
