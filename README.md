@@ -2,9 +2,7 @@
 
 ### Swagger-UI
 
-![iamgedemo](https://res.cloudinary.com/dadvtny30/image/upload/v1740559344/parking/nm8kgwcnr05jcigkdbnr.png)
-
-## Demo: https://goparking.duckdns.org:8443/swagger/index.html
+![Swagger](https://res.cloudinary.com/dadvtny30/image/upload/v1740559344/parking/nm8kgwcnr05jcigkdbnr.png)
 
 ### Features :
 
