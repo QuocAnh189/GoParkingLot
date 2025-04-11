@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '8003:80'
+    environment:
+      - VITE_API_URL=http://localhost:8002/api/v1
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/app
+    restart: unless-stopped

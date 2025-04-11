@@ -193,22 +193,19 @@ func (io *IOHistoryService) Exit(ctx context.Context, req *dto.CreateIoHistoryRe
 }
 
 func DetectPlate(image *multipart.FileHeader) ([]string, string, error) {
-	// conf := configs.GetConfig()
-	// Mở file từ FileHeader
 	file, err := image.Open()
 	if err != nil {
 		return nil, "", err
 	}
 	defer file.Close()
 
-	// Đọc nội dung file thành []byte
 	imageData, err := io.ReadAll(file)
 	if err != nil {
 		return nil, "", err
 	}
 
 	// conn, err := grpc.NewClient(fmt.Sprintf("localhost:%d", conf.GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	conn, err := grpc.NewClient("plate_detector:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("parking.plate_detector:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		return nil, "", err

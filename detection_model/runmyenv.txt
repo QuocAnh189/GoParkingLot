@@ -1,0 +1,6 @@
+python -m venv myenv
+myenv\Scripts\activate
+python src/app.py
+python -u src/grpc_server.py
+
+pip freeze > requirements.txt

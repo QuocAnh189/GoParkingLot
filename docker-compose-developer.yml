@@ -1,83 +1,117 @@
 services:
+  parking.frontend:
+    container_name: parking.frontend
+    env_file:
+      - .env
+    build:
+      context: ./frontend
+    ports:
+      - '8005:80'
+      - '443:443'
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: unless-stopped
+
+  parking.plate_detector:
+    container_name: parking.plate_detector
+    env_file:
+      - .env
+    build: ./detection_model
+    ports:
+      - '50051:50051'
+    environment:
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+
   parking.api:
+    container_name: parking.api
+    env_file:
+      - .env
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: parking.api
     environment:
-        ENVIRONMENT: production
-        HTTP_PORT: 8080
-        GRPC_PORT: 50051
-        AUTH_SECRET: ######
-        ACCESS_TOKEN_DURATION: 15m
-        REFRESH_TOKEN_DURATION: 24h
-        DATABASE_URI: postgres://postgres:password123@parking.db:5432/parkinglot
-        MINIO_ENDPOINT: parking.minio:9000
-        MINIO_ACCESSKEY: 3SYhDzVQBrLI9SzRB1zR
-        MINIO_SECRETKEY: 8LJFPwOg4jscApFpAwawnbTKHNcyTd6y60mOzZbs
-        MINIO_BUCKET: goparking
-        MINIO_BASEURL: http://localhost:9000
-        MINIO_USESSL: false
-        REDIS_URI: parking.redis:6379
-        REDIS_PASSWORD: password
-        REDIS_DB: 0
+      ENVIRONMENT: ${ENVIRONMENT}
+      HTTP_PORT: ${HTTP_PORT}
+      GRPC_PORT: ${GRPC_PORT}
+      AUTH_SECRET: ${AUTH_SECRET}
+      ACCESS_TOKEN_DURATION: ${ACCESS_TOKEN_DURATION}
+      REFRESH_TOKEN_DURATION: ${REFRESH_TOKEN_DURATION}
+      DATABASE_URI: ${DATABASE_URI}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESSKEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRETKEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_BASEURL: ${MINIO_BASEURL}
+      MINIO_USESSL: ${MINIO_USESSL}
+      REDIS_URI: ${REDIS_URI}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: ${REDIS_DB}
     ports:
-      - "8002:8080"
+      - '8002:8080'
     depends_on:
       - parking.db
       - parking.minio
       - parking.redis
+      - parking.plate_detector
     restart: unless-stopped
-    volumes:
-      - .:/app
 
   parking.db:
-    image: postgres:16
     container_name: parking.db
+    env_file:
+      - .env
+    image: postgres:16
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: parkinglot
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - parking_postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   parking.minio:
     image: minio/minio:latest
+    env_file:
+      - .env
     container_name: parking.minio
     ports:
-      - "9000:9000" # MinIO API
-      - "9001:9001" # MinIO Console
+      - '9000:9000' # MinIO API
+      - '9001:9001' # MinIO Console
     restart: unless-stopped
     volumes:
       - parking_minio_data:/data
       - parking_minio_config:/root/.minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
 
   parking.redis:
-    image: redis:latest
     container_name: parking.redis
+    env_file:
+      - .env
+    image: redis:latest
     restart: unless-stopped
     ports:
-      - "6389:6379"
+      - '6389:6379'
     volumes:
       - parking_redis_data:/data
     environment:
-      REDIS_PASSWORD: password
-      REDIS_PORT: 6379
-      REDIS_DATABASES: 0
-    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "password" ]
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DATABASES: ${REDIS_DB}
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', 'password']
 
 networks:
   default:
     name: parking
     driver: bridge
-
 
 volumes:
   parking_postgres_data:

@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.DS_Store
+.git
+.gitignore
+.venv
+.env
+
+
+myenv/
+src/__pycache__/
+src/plate_detector/__pycache__/
+# src/plate_detector/yolov5/*
+# !src/plate_detector/yolov5/

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package detect;
+
+message PlateRequest {
+    bytes image = 1;
+}
+
+message PlateResponse {
+    repeated string license_plate_detect = 1;
+    string crop_img_url = 2;
+}
+
+service PlateDetection {
+    rpc Detect(PlateRequest) returns (PlateResponse);
+}
