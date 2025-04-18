@@ -31,18 +31,16 @@
 
 ### Tech Stack :
 
-- Restful API
-- GRPC
-- Gin-gonic
-- Gorm
-- Swagger
-- Logging
-- Jwt-Go
-- Gin-gonic
-- Docker
-- Nginx
+- [Restful API](https://docs.github.com/en/rest?apiVersion=2022-11-28)
+- [Gin-gonic](https://github.com/gin-gonic/gin)
+- [GRPC](https://github.com/grpc/grpc-go)
+- [Gorm](https://github.com/go-gorm/gorm)
+- [Swagger](https://github.com/swagger-api)
+- [Jwt-Go](https://github.com/golang-jwt/jwt)
+- [Docker](https://www.docker.com/)
+- [Nginx](https://nginx.org/)
+- [Minio](https://github.com/minio/minio-go)
 - Postgres
-- Minio
 - RFID
 
 ## Author Contact
